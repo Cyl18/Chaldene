@@ -514,7 +514,7 @@ public partial class MiraiBot : IDisposable
     /// </summary>
     public void UseAutoReconnect()
     {
-        Disconnected += async (_, s) =>
+        Disconnected += async (_, _) =>
         {
             try
             {
@@ -526,6 +526,7 @@ public partial class MiraiBot : IDisposable
             }
             catch (Exception)
             {
+                //
             }
         };
     }

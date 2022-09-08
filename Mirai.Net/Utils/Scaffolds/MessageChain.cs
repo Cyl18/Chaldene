@@ -43,7 +43,7 @@ public partial class MessageChain : List<MessageBase>
     /// <returns>如果没有文本消息返回空字符串</returns>
     public string GetPlainMessage()
     {
-        var plain = this.OfType<PlainMessage>().ToList();
+        var plain = this.OfType<PlainMessage>().ToArray();
         if (!plain.Any())
             return string.Empty;
 
@@ -56,7 +56,7 @@ public partial class MessageChain : List<MessageBase>
     /// <returns>如果没有文本消息返回空列表</returns>
     public List<string> GetSeparatedPlainMessage()
     {
-        var plain = this.OfType<PlainMessage>().ToList();
+        var plain = this.OfType<PlainMessage>().ToArray();
         if (!plain.Any())
             return new List<string>();
 
