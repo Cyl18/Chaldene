@@ -33,6 +33,9 @@ public record EventBase
         return this.ToJsonString();
     }
     
+    /// <summary>
+    /// bot
+    /// </summary>
     [JsonIgnore]
     public MiraiBot Bot { get; set; }
 

@@ -5,9 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Manganese.Array;
 using Manganese.Text;
+using Mirai.Net.Data.Events;
+using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Sessions;
+using Mirai.Net.Utils.Scaffolds;
 
 namespace Mirai.Net.Test
 {
@@ -17,28 +20,17 @@ namespace Mirai.Net.Test
         {
             var exit = new ManualResetEvent(false);
             
-            var bot = new MiraiBot
+            var bot = new MiraiBot("localhost:8080", "1145141919810", "1590454991");
+            await bot.LaunchAsync();
+
+            bot.GroupMessageReceived += async (sender, args) =>
             {
-                Address = "localhost:8080",
-                VerifyKey = "1145141919810",
-                QQ = "1590454991"
+                if (args.MessageChain.GetPlainMessage() == "Hello, World!")
+                {
+                    await bot.SendGroupMessageAsync(args.GroupId, "hi!");
+                }
             };
             
-            await bot.LaunchAsync().ConfigureAwait(false);
-            
-            bot.MessageReceived
-                .OfType<GroupMessageReceiver>()
-                .Subscribe(async r =>
-                {
-                    var ums = r.MessageChain.OfType<UnknownMessage>();
-                    if (ums.Any())
-                    {
-                        ums.Output(x => x.ToJsonString());
-                    }
-                });
-            
-            
-
             Console.WriteLine("launched");
             exit.WaitOne();
         }

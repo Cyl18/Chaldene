@@ -8,7 +8,7 @@ namespace Mirai.Net.Data.Sessions
 /// <summary>
 /// 连接配置
 /// </summary>
-public record ConnectConfig
+public record ConnectionConfig
 {
     /// <summary>
     /// http连接配置
@@ -25,9 +25,9 @@ public record ConnectConfig
     /// </summary>
     /// <param name="address"></param>
     /// <returns></returns>
-    public static implicit operator ConnectConfig(string address)
+    public static implicit operator ConnectionConfig(string address)
     {
-        return new ConnectConfig
+        return new ConnectionConfig
         {
             HttpAddress = address,
             WebsocketAddress = address
@@ -37,7 +37,7 @@ public record ConnectConfig
     /// <summary>
     /// 实例化一个连接配置
     /// </summary>
-    public ConnectConfig()
+    public ConnectionConfig()
     {
     }
 
@@ -45,7 +45,7 @@ public record ConnectConfig
     /// 从地址构造连接配置, HTTP 和 Websocket 地址相同
     /// </summary>
     /// <param name="address"></param>
-    public ConnectConfig(string address)
+    public ConnectionConfig(string address)
     {
         HttpAddress = address;
         WebsocketAddress = address;
@@ -57,7 +57,7 @@ public record ConnectConfig
     /// <param name="config"></param>
     /// <returns></returns>
     /// <exception cref="InvalidAddressException"></exception>
-    public static implicit operator string(ConnectConfig config)
+    public static implicit operator string(ConnectionConfig config)
     {
         if (config.HttpAddress != config.WebsocketAddress)
         {
@@ -72,7 +72,7 @@ public record ConnectConfig
     /// </summary>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static implicit operator AdapterConfig(ConnectConfig config)
+    public static implicit operator AdapterConfig(ConnectionConfig config)
     {
         return config.HttpAddress;
     }

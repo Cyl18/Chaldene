@@ -26,4 +26,51 @@ public record Group
     [JsonProperty("permission")]
     [JsonConverter(typeof(StringEnumConverter))]
     public Permissions Permission { get; set; }
+
+}
+
+/// <summary>
+/// 群号
+/// </summary>
+public class GroupId
+{
+    /// <summary>
+    /// 群号
+    /// </summary>
+    public string Id { get; }
+/// <summary>
+/// 
+/// </summary>
+/// <param name="id"></param>
+    public GroupId(string id)
+    {
+        Id = id;
+    }
+/// <summary>
+/// 
+/// </summary>
+/// <param name="qq"></param>
+/// <returns></returns>
+    public static implicit operator GroupId(string qq)
+    {
+        return new GroupId(qq);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="group"></param>
+    /// <returns></returns>
+    public static implicit operator string(GroupId group)
+    {
+        return group.Id;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="qq"></param>
+    /// <returns></returns>
+    public static implicit operator GroupId(long qq)
+    {
+        return new GroupId(qq.ToString());
+    }
 }

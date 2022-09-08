@@ -20,7 +20,9 @@ public record MessageReceiverBase
     /// 接受到的消息链
     /// </summary>
     [JsonProperty("messageChain")] public MessageChain MessageChain { get; set; }
-    
+    /// <summary>
+    /// 
+    /// </summary>
     [JsonIgnore]
     public MiraiBot Bot { get; set; }
 }

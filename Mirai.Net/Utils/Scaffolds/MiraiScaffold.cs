@@ -162,7 +162,7 @@ public static class MiraiScaffold
     public static async Task<string> SendMessageAsync(this TempMessageReceiver receiver, string message)
     {
         return await receiver.Bot
-            .SendTempMessageAsync(receiver.Sender.Id, receiver.Sender.Group.Id, message).ConfigureAwait(false);
+            .SendTempMessageAsync(receiver.Sender, message).ConfigureAwait(false);
     }
 
     /// <summary>

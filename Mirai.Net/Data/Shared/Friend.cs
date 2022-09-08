@@ -30,4 +30,64 @@ public record Friend
     /// </summary>
     [JsonProperty("remark")]
     public string Remark { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="friend"></param>
+    /// <returns></returns>
+    public static implicit operator UserId(Friend friend)
+    {
+        return new UserId(friend.Id);
+    }
+}
+
+/// <summary>
+/// 个人QQ号
+/// </summary>
+public class UserId
+{
+    /// <summary>
+    /// QQ号
+    /// </summary>
+    public string Id { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    public UserId(string id)
+    {
+        Id = id;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="qq"></param>
+    /// <returns></returns>
+    public static implicit operator UserId(string qq)
+    {
+        return new UserId(qq);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public static implicit operator string(UserId userId)
+    {
+        return userId.Id;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="qq"></param>
+    /// <returns></returns>
+    public static implicit operator UserId(long qq)
+    {
+        return new UserId(qq.ToString());
+    }
 }

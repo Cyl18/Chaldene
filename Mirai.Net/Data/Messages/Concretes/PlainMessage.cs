@@ -26,7 +26,8 @@ public record PlainMessage : MessageBase
     /// <summary>
     /// 文本
     /// </summary>
-    [JsonProperty("text")] public string Text { get; set; }
+    [JsonProperty("text")]
+    public string Text { get; set; }
 
     /// <summary>
     /// 消息类型

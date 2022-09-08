@@ -111,11 +111,12 @@ internal static class ReflectionUtils
         }
         
     }
-    
+
     /// <summary>
     ///     根据json动态解析正确的消息接收器子类
     /// </summary>
     /// <param name="data"></param>
+    /// <param name="bot"></param>
     /// <returns></returns>
     internal static MessageReceiverBase GetMessageReceiverBase(string data, MiraiBot bot)
     {
@@ -142,6 +143,7 @@ internal static class ReflectionUtils
     ///     根据json动态解析对应的事件子类
     /// </summary>
     /// <param name="data"></param>
+    /// <param name="bot"></param>
     /// <returns></returns>
     internal static EventBase GetEventBase(string data, MiraiBot bot)
     {

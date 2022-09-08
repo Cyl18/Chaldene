@@ -88,26 +88,25 @@ public partial class MiraiBot
     /// <param name="target"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> SendFriendMessageAsync(string target, MessageChain chain)
+    public async Task<string> SendFriendMessageAsync(UserId target, MessageChain chain)
     {
         var payload = new
         {
-            target,
+            target = (string)target,
             messageChain = chain
         };
 
         return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload).ConfigureAwait(false);
     }
-
     /// <summary>
-    ///     发送好友消息
+    /// 发送好友消息
     /// </summary>
-    /// <param name="friend"></param>
-    /// <param name="chain"></param>
+    /// <param name="target"></param>
+    /// <param name="messages"></param>
     /// <returns></returns>
-    public async Task<string> SendFriendMessageAsync(Friend friend, MessageChain chain)
+    public async Task<string> SendFriendMessageAsync(UserId target, params MessageBase[] messages)
     {
-        return await SendFriendMessageAsync(friend.Id, chain).ConfigureAwait(false);
+        return await SendFriendMessageAsync(target, new MessageChain(messages)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -116,11 +115,11 @@ public partial class MiraiBot
     /// <param name="target"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> SendGroupMessageAsync(string target, MessageChain chain)
+    public async Task<string> SendGroupMessageAsync(GroupId target, MessageChain chain)
     {
         var payload = new
         {
-            target,
+            target = (string)target,
             messageChain = chain
         };
 
@@ -128,15 +127,16 @@ public partial class MiraiBot
     }
 
     /// <summary>
-    ///     发送群消息
+    /// 发送群消息
     /// </summary>
-    /// <param name="group"></param>
-    /// <param name="chain"></param>
+    /// <param name="target"></param>
+    /// <param name="messages"></param>
     /// <returns></returns>
-    public async Task<string> SendGroupMessageAsync(Group group, MessageChain chain)
+    public Task<string> SendGroupMessageAsync(GroupId target, params MessageBase[] messages)
     {
-        return await SendGroupMessageAsync(group.Id, chain).ConfigureAwait(false);
+        return SendGroupMessageAsync(target, new MessageChain(messages));
     }
+
 
     /// <summary>
     ///     发送群临时消息
@@ -145,7 +145,7 @@ public partial class MiraiBot
     /// <param name="group"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> SendTempMessageAsync(string qq, string group, MessageChain chain)
+    public async Task<string> SendTempMessageAsync(UserId qq, GroupId group, MessageChain chain)
     {
         var payload = new
         {
@@ -155,6 +155,18 @@ public partial class MiraiBot
         };
 
         return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload).ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// 发送群临时消息
+    /// </summary>
+    /// <param name="qq"></param>
+    /// <param name="group"></param>
+    /// <param name="messages"></param>
+    /// <returns></returns>
+    public Task<string> SendTempMessageAsync(UserId qq, GroupId group, params MessageBase[] messages)
+    {
+        return SendTempMessageAsync(qq, group, new MessageChain(messages));
     }
 
     /// <summary>
@@ -167,6 +179,17 @@ public partial class MiraiBot
     {
         return await SendTempMessageAsync(member.Id, member.Group.Id, chain).ConfigureAwait(false);
     }
+    
+    /// <summary>
+    /// 发送群临时消息
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="messages"></param>
+    /// <returns></returns>
+    public Task<string> SendTempMessageAsync(Member member, params MessageBase[] messages)
+    {
+        return SendTempMessageAsync(member, new MessageChain(messages));
+    }
 
     /// <summary>
     ///     发送头像戳一戳
@@ -174,7 +197,7 @@ public partial class MiraiBot
     /// <param name="target">戳一戳的目标</param>
     /// <param name="subject">在什么地方戳</param>
     /// <param name="kind">只可以选Friend, Strange和Group</param>
-    public async Task SendNudgeAsync(string target, string subject, MessageReceivers kind)
+    public async Task SendNudgeAsync(UserId target, string subject, MessageReceivers kind)
     {
         var payload = new
         {
@@ -224,7 +247,7 @@ public partial class MiraiBot
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> QuoteFriendMessageAsync(string target, string messageId,
+    public async Task<string> QuoteFriendMessageAsync(UserId target, string messageId,
         MessageChain chain)
     {
         var payload = new
@@ -236,18 +259,17 @@ public partial class MiraiBot
 
         return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload).ConfigureAwait(false);
     }
-
+    
     /// <summary>
-    ///     回复好友消息
+    /// 回复好友消息
     /// </summary>
-    /// <param name="friend"></param>
+    /// <param name="target"></param>
     /// <param name="messageId"></param>
-    /// <param name="chain"></param>
+    /// <param name="messages"></param>
     /// <returns></returns>
-    public async Task<string> QuoteFriendMessageAsync(Friend friend, string messageId,
-        MessageChain chain)
+    public Task<string> QuoteFriendMessageAsync(UserId target, string messageId, params MessageBase[] messages)
     {
-        return await QuoteFriendMessageAsync(friend.Id, messageId, chain).ConfigureAwait(false);
+        return QuoteFriendMessageAsync(target, messageId, new MessageChain(messages));
     }
 
     /// <summary>
@@ -257,7 +279,7 @@ public partial class MiraiBot
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> QuoteGroupMessageAsync(string target, string messageId, MessageChain chain)
+    public async Task<string> QuoteGroupMessageAsync(GroupId target, string messageId, MessageChain chain)
     {
         var payload = new
         {
@@ -268,19 +290,19 @@ public partial class MiraiBot
 
         return await SendMessageAsync(HttpEndpoints.SendGroupMessage, payload).ConfigureAwait(false);
     }
-
+    
     /// <summary>
-    ///     回复群消息
+    /// 回复群消息
     /// </summary>
-    /// <param name="group"></param>
+    /// <param name="target"></param>
     /// <param name="messageId"></param>
-    /// <param name="chain"></param>
+    /// <param name="messages"></param>
     /// <returns></returns>
-    public async Task<string> QuoteGroupMessageAsync(Group group, string messageId,
-        MessageChain chain)
+    public Task<string> QuoteGroupMessageAsync(GroupId target, string messageId, params MessageBase[] messages)
     {
-        return await QuoteGroupMessageAsync(group.Id, messageId, chain).ConfigureAwait(false);
+        return QuoteGroupMessageAsync(target, messageId, new MessageChain(messages));
     }
+
 
     /// <summary>
     ///     回复临时消息
@@ -290,7 +312,7 @@ public partial class MiraiBot
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
+    public async Task<string> QuoteTempMessageAsync(UserId memberId, GroupId group, string messageId,
         MessageChain chain)
     {
         var payload = new
@@ -303,6 +325,18 @@ public partial class MiraiBot
 
         return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload).ConfigureAwait(false);
     }
+    /// <summary>
+    /// 回复临时消息
+    /// </summary>
+    /// <param name="memberId"></param>
+    /// <param name="group"></param>
+    /// <param name="messageId"></param>
+    /// <param name="messages"></param>
+    /// <returns></returns>
+    public Task<string> QuoteTempMessageAsync(UserId memberId, GroupId group, string messageId, params MessageBase[] messages)
+    {
+        return QuoteTempMessageAsync(memberId, group, messageId, new MessageChain(messages));
+    }
 
     /// <summary>
     ///     回复临时消息
@@ -314,154 +348,21 @@ public partial class MiraiBot
     public async Task<string> QuoteTempMessageAsync(Member member, string messageId,
         MessageChain chain)
     {
-        return await QuoteTempMessageAsync(member.Group.Id, member.Group.Id, messageId, chain).ConfigureAwait(false);
+        return await QuoteTempMessageAsync(member.Id, member.Group.Id, messageId, chain).ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// 回复临时消息
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="messageId"></param>
+    /// <param name="messages"></param>
+    /// <returns></returns>
+    public Task<string> QuoteTempMessageAsync(Member member, string messageId, params MessageBase[] messages)
+    {
+        return QuoteTempMessageAsync(member, messageId, new MessageChain(messages));
     }
 
     #endregion
 
-    #region Exposed overloads
-
-    /// <summary>
-    ///     发送好友消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendFriendMessageAsync(string target, string message)
-    {
-        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     发送好友消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendFriendMessageAsync(Friend target, string message)
-    {
-        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-
-    /// <summary>
-    ///     发送临时消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="group"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendTempMessageAsync(string target, string group, string message)
-    {
-        return await SendTempMessageAsync(target, group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     发送临时消息
-    /// </summary>
-    /// <param name="member"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendTempMessageAsync(Member member, string message)
-    {
-        return await SendTempMessageAsync(member, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     发送群消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendGroupMessageAsync(string target, string message)
-    {
-        return await SendGroupMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     发送群消息
-    /// </summary>
-    /// <param name="group"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> SendGroupMessageAsync(Group group, string message)
-    {
-        return await SendGroupMessageAsync(group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用好友消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteFriendMessageAsync(string target, string messageId, string message)
-    {
-        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用好友消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteFriendMessageAsync(Friend target, string messageId, string message)
-    {
-        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用群消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteGroupMessageAsync(string target, string messageId, string message)
-    {
-        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用群消息
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteGroupMessageAsync(Group target, string messageId, string message)
-    {
-        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用临时消息
-    /// </summary>
-    /// <param name="memberId"></param>
-    /// <param name="group"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
-        string message)
-    {
-        return await QuoteTempMessageAsync(memberId, group, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     引用临时消息
-    /// </summary>
-    /// <param name="member"></param>
-    /// <param name="messageId"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public async Task<string> QuoteTempMessageAsync(Member member, string messageId, string message)
-    {
-        return await QuoteTempMessageAsync(member, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
-    }
-
-    #endregion
 }

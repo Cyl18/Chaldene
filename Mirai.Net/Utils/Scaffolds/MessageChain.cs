@@ -25,6 +25,14 @@ public partial class MessageChain : List<MessageBase>
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="collection"></param>
+    public MessageChain(params MessageBase[] collection) : base(collection)
+    {
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public MessageChain() : base()
     {
     }

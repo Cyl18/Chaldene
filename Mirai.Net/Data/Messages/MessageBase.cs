@@ -1,4 +1,5 @@
 ﻿using Manganese.Text;
+using Mirai.Net.Data.Messages.Concretes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -34,5 +35,15 @@ public record MessageBase
     public static MessageChain operator +(MessageBase msg1, MessageBase msg2)
     {
         return new MessageChain { msg1, msg2 };
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public static implicit operator MessageBase(string str)
+    {
+        return new PlainMessage(str);
     }
 }

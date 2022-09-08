@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Flurl.Http;
 using Manganese.Text;
+using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
 using Mirai.Net.Utils.Internal;
@@ -156,7 +157,7 @@ public partial class MiraiBot
     /// <param name="imagePath">图片路径</param>
     /// <param name="imageUploadTargets">上传类型</param>
     /// <returns>item1: 图片id，item2：图片url</returns>
-    public async Task<(string, string)> UploadImageAsync(string imagePath,
+    public async Task<ImageInfo> UploadImageAsync(string imagePath,
         ImageUploadTargets imageUploadTargets = ImageUploadTargets.Group)
     {
         var url = $"http://{Address.HttpAddress}/{HttpEndpoints.UploadImage.GetDescription()}";
@@ -170,7 +171,7 @@ public partial class MiraiBot
         var re = await result.GetStringAsync().ConfigureAwait(false);
         EnsureSuccess(re, "这大抵是个玄学问题罢。");
 
-        return (re.Fetch("imageId"), re.Fetch("url"));
+        return new ImageInfo(re.Fetch("imageId"), re.Fetch("url"));
     }
 
     /// <summary>
@@ -178,7 +179,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="voicePath">语言路径</param>
     /// <returns>item1: 语音id，item2：语音url</returns>
-    public async Task<(string, string)> UploadVoiceAsync(string voicePath)
+    public async Task<VoiceInfo> UploadVoiceAsync(string voicePath)
     {
         var url = $"http://{Address.HttpAddress}/{HttpEndpoints.UploadVoice.GetDescription()}";
 
@@ -191,6 +192,43 @@ public partial class MiraiBot
         var re = await result.GetStringAsync().ConfigureAwait(false);
         EnsureSuccess(re, "这大抵是个玄学问题罢。");
 
-        return (re.Fetch("voiceId"), re.Fetch("url"));
+        //return (re.Fetch("voiceId"), re.Fetch("url"));
+        return new VoiceInfo(re.Fetch("voiceId"), re.Fetch("url"));
+    }
+}
+
+/// <summary>
+/// 语音信息
+/// </summary>
+/// <param name="VoiceId"></param>
+/// <param name="Url"></param>
+public record VoiceInfo(string VoiceId, string Url)
+{
+    /// <summary>
+    /// 隐式转换语音消息
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    public static implicit operator VoiceMessage(VoiceInfo info)
+    {
+        return new VoiceMessage() {VoiceId = info.VoiceId};
+    }
+}
+
+/// <summary>
+/// 图片信息
+/// </summary>
+/// <param name="ImageId"></param>
+/// <param name="Url"></param>
+public record ImageInfo(string ImageId, string Url)
+{
+    /// <summary>
+    /// 隐式转换ImageMessage
+    /// </summary>
+    /// <param name="imageInfo"></param>
+    /// <returns></returns>
+    public static implicit operator ImageMessage(ImageInfo imageInfo)
+    {
+        return new ImageMessage() {Url = imageInfo.Url};
     }
 }

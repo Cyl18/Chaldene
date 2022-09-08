@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 using Flurl;
 using Manganese.Text;
 using Mirai.Net.Data.Events;
+using Mirai.Net.Data.Events.Concretes;
+using Mirai.Net.Data.Events.Concretes.Bot;
+using Mirai.Net.Data.Events.Concretes.Friend;
+using Mirai.Net.Data.Events.Concretes.Group;
 using Mirai.Net.Data.Events.Concretes.Message;
+using Mirai.Net.Data.Events.Concretes.OtherClient;
+using Mirai.Net.Data.Events.Concretes.Request;
 using Mirai.Net.Data.Exceptions;
 using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Sessions;
+using Mirai.Net.Data.Shared;
 using Mirai.Net.Utils.Internal;
 using Mirai.Net.Utils.Scaffolds;
 using Newtonsoft.Json;
@@ -25,6 +32,436 @@ namespace Mirai.Net.Sessions;
 /// </summary>
 public partial class MiraiBot : IDisposable
 {
+    #region MessageReceivers
+
+    /// <summary>
+    /// 接收到的消息
+    /// </summary>
+    public event CommonEventHandler<FriendMessageReceiver> FriendMessageReceived
+    {
+        add => MessageReceived.OfType<FriendMessageReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 接收到群消息
+    /// </summary>
+    public event CommonEventHandler<GroupMessageReceiver> GroupMessageReceived
+    {
+        add => MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 接收到临时消息
+    /// </summary>
+    public event CommonEventHandler<TempMessageReceiver> TempMessageReceived
+    {
+        add => MessageReceived.OfType<TempMessageReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 接收到陌生人的消息
+    /// </summary>
+    public event CommonEventHandler<StrangerMessageReceiver> StrangerMessageReceived
+    {
+        add => MessageReceived.OfType<StrangerMessageReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 接收到其它客户端的消息
+    /// </summary>
+    public event CommonEventHandler<OtherClientMessageReceiver> OtherClientMessageReceived
+    {
+        add => MessageReceived.OfType<OtherClientMessageReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 未知类型的消息接收器
+    /// </summary>
+    public event CommonEventHandler<UnknownReceiver> UnknownChatMessageReceived
+    {
+        add => MessageReceived.OfType<UnknownReceiver>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Events
+
+    /// <summary>
+    /// 未知的事件
+    /// </summary>
+    public event CommonEventHandler<UnknownEvent> UnknownEventReceived
+    {
+        add => EventReceived.OfType<UnknownEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 新的好友请求
+    /// </summary>
+    public event CommonEventHandler<NewFriendRequestedEvent> NewFriendRequestedEvent
+    {
+        add => EventReceived.OfType<NewFriendRequestedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 新的邀请（邀请bot加入某群）
+    /// </summary>
+    public event CommonEventHandler<NewInvitationRequestedEvent> NewInvitationRequestedEvent
+    {
+        add => EventReceived.OfType<NewInvitationRequestedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 新成员申请
+    /// </summary>
+    public event CommonEventHandler<NewMemberRequestedEvent> NewMemberRequestedEvent
+    {
+        add => EventReceived.OfType<NewMemberRequestedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 其它客户端离线
+    /// </summary>
+    public event CommonEventHandler<OtherClientOfflineEvent> OtherClientOfflineEvent
+    {
+        add => EventReceived.OfType<OtherClientOfflineEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 其它客户端上线
+    /// </summary>
+    public event CommonEventHandler<OtherClientOnlineEvent> OtherClientOnlineEvent
+    {
+        add => EventReceived.OfType<OtherClientOnlineEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被人at
+    /// </summary>
+    public event CommonEventHandler<AtEvent> AtEvent
+    {
+        add => EventReceived.OfType<AtEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某人被戳了一戳
+    /// </summary>
+    public event CommonEventHandler<NudgeEvent> NudgeEvent
+    {
+        add => EventReceived.OfType<NudgeEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群内是否允许匿名聊天的状态改变
+    /// </summary>
+    public event CommonEventHandler<GroupAllowedAnonymousChatEvent> GroupAllowedAnonymousChatEvent
+    {
+        add => EventReceived.OfType<GroupAllowedAnonymousChatEvent>()
+            .Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群内是否允许坦白说的状态发生改变
+    /// </summary>
+    public event CommonEventHandler<GroupAllowedConfessTalkChanged> GroupAllowedConfessTalkChanged
+    {
+        add => EventReceived.OfType<GroupAllowedConfessTalkChanged>()
+            .Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群内是否允许群员邀请新成员的状态发生改变
+    /// </summary>
+    public event CommonEventHandler<GroupAllowedMemberInviteEvent> GroupAllowedMemberInviteEvent
+    {
+        add => EventReceived.OfType<GroupAllowedMemberInviteEvent>()
+            .Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 入群公告发生改变
+    /// </summary>
+    public event CommonEventHandler<GroupEntranceAnnouncementChangedEvent> GroupEntranceAnnouncementChangedEvent
+    {
+        add => EventReceived.OfType<GroupEntranceAnnouncementChangedEvent>()
+            .Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某条群消息被撤回
+    /// </summary>
+    public event CommonEventHandler<GroupMessageRecalledEvent> GroupMessageRecalledEvent
+    {
+        add => EventReceived.OfType<GroupMessageRecalledEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某群开启/关闭了全员禁言
+    /// </summary>
+    public event CommonEventHandler<GroupMutedAllEvent> GroupMutedAllEvent
+    {
+        add => EventReceived.OfType<GroupMutedAllEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某群的改了群名
+    /// </summary>
+    public event CommonEventHandler<GroupNameChangedEvent> GroupNameChangedEvent
+    {
+        add => EventReceived.OfType<GroupNameChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot加入了一个新群
+    /// </summary>
+    public event CommonEventHandler<JoinedEvent> JoinedEvent
+    {
+        add => EventReceived.OfType<JoinedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被某群踢了
+    /// </summary>
+    public event CommonEventHandler<KickedEvent> KickedEvent
+    {
+        add => EventReceived.OfType<KickedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot主动离开了某群
+    /// </summary>
+    public event CommonEventHandler<LeftEvent> LeftEvent
+    {
+        add => EventReceived.OfType<LeftEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某人的群名片改变
+    /// </summary>
+    public event CommonEventHandler<MemberCardChangedEvent> MemberCardChangedEvent
+    {
+        add => EventReceived.OfType<MemberCardChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群员称号改变
+    /// </summary>
+    public event CommonEventHandler<MemberHonorChangedEvent> MemberHonorChangedEvent
+    {
+        add => EventReceived.OfType<MemberHonorChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 新成员入群
+    /// </summary>
+    public event CommonEventHandler<MemberJoinedEvent> MemberJoinedEvent
+    {
+        add => EventReceived.OfType<MemberJoinedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某群员被踢出群
+    /// </summary>
+    public event CommonEventHandler<MemberKickedEvent> MemberKickedEvent
+    {
+        add => EventReceived.OfType<MemberKickedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群成员离开群
+    /// </summary>
+    public event CommonEventHandler<MemberLeftEvent> MemberLeftEvent
+    {
+        add => EventReceived.OfType<MemberLeftEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某群员被禁言
+    /// </summary>
+    public event CommonEventHandler<MemberMutedEvent> MemberMutedEvent
+    {
+        add => EventReceived.OfType<MemberMutedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 某群员权限改变，操作者一定是群主
+    /// </summary>
+    public event CommonEventHandler<MemberPermissionChangedEvent> MemberPermissionChangedEvent
+    {
+        add => EventReceived.OfType<MemberPermissionChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群头衔改动（只有群主有操作限权）
+    /// </summary>
+    public event CommonEventHandler<MemberTitleChangedEvent> MemberTitleChangedEvent
+    {
+        add => EventReceived.OfType<MemberTitleChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 群员被解除禁言
+    /// </summary>
+    public event CommonEventHandler<MemberUnmutedEvent> MemberUnmutedEvent
+    {
+        add => EventReceived.OfType<MemberUnmutedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被禁言
+    /// </summary>
+    public event CommonEventHandler<MutedEvent> MutedEvent
+    {
+        add => EventReceived.OfType<MutedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot在群内的权限改变，操作者一定是群主
+    /// </summary>
+    public event CommonEventHandler<PermissionChangedEvent> PermissionChangedEvent
+    {
+        add => EventReceived.OfType<PermissionChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被解除禁言
+    /// </summary>
+    public event CommonEventHandler<UnmutedEvent> UnmutedEvent
+    {
+        add => EventReceived.OfType<UnmutedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 好友输入状态改变
+    /// </summary>
+    public event CommonEventHandler<FriendInputStatusChangedEvent> FriendInputStatusChangedEvent
+    {
+        add => EventReceived.OfType<FriendInputStatusChangedEvent>()
+            .Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 好友昵称改变
+    /// </summary>
+    public event CommonEventHandler<FriendNickChangedEvent> FriendNickChangedEvent
+    {
+        add => EventReceived.OfType<FriendNickChangedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 好友撤回了某条消息
+    /// </summary>
+    public event CommonEventHandler<FriendRecalledEvent> FriendRecalledEvent
+    {
+        add => EventReceived.OfType<FriendRecalledEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被服务器断开或因网络问题而掉线
+    /// </summary>
+    public event CommonEventHandler<DroppedEvent> DroppedEvent
+    {
+        add => EventReceived.OfType<DroppedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot主动离线
+    /// </summary>
+    public event CommonEventHandler<OfflineEvent> OfflineEvent
+    {
+        add => EventReceived.OfType<OfflineEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot被挤下线
+    /// </summary>
+    public event CommonEventHandler<OfflineForceEvent> OfflineForceEvent
+    {
+        add => EventReceived.OfType<OfflineForceEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot自身上线
+    /// </summary>
+    public event CommonEventHandler<OnlineEvent> OnlineEvent
+    {
+        add => EventReceived.OfType<OnlineEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bot主动重新登录
+    /// </summary>
+    public event CommonEventHandler<ReconnectedEvent> ReconnectedEvent
+    {
+        add => EventReceived.OfType<ReconnectedEvent>().Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 构造一个 <see cref="MiraiBot"/> 实例
+    /// </summary>
+    /// <param name="address">mirai-api-http本地服务器地址，比如：localhost:2333，或者构造一个ConnectionConfig对象</param>
+    /// <param name="verifyKey">verifyKey</param>
+    /// <param name="qq">建立连接的QQ账号</param>
+    public MiraiBot(string address, string verifyKey, UserId qq)
+    {
+        Address = address;
+        VerifyKey = verifyKey;
+        QQ = qq;
+    }
+
+    /// <summary>
+    /// 一定要记得初始化 Address, VerifyKey, QQ 哟
+    /// </summary>
+    public MiraiBot()
+    {
+        
+    }
+
     /// <summary>
     /// 销毁当前对象
     /// </summary>
@@ -59,20 +496,39 @@ public partial class MiraiBot : IDisposable
     // [JsonIgnore]
     // public static MiraiBot Instance { get; set; }
 
-    [JsonIgnore]
-    internal string HttpSessionKey { get; set; }
-    
-    [JsonIgnore]
-    private string _qq;
-    [JsonIgnore]
-    private WebsocketClient _client;
+    [JsonIgnore] internal string HttpSessionKey { get; set; }
+
+    [JsonIgnore] private string _qq;
+    [JsonIgnore] private WebsocketClient _client;
 
     /// <summary>
     ///     mirai-api-http本地服务器地址，比如：localhost:114514，或者构造一个ConnectConfig对象
     ///     <exception cref="InvalidAddressException">传入错误的地址将会抛出异常</exception>
     /// </summary>
-    public ConnectConfig Address { get; set; }
+    public ConnectionConfig Address { get; set; }
 
+    /// <summary>
+    /// 使用自动重连<br/>
+    /// 原理：在websocket断开连接后无限重试，但是不会输出任何内容<br/>
+    /// 如果需要输出内容请手动重连 具体可以参考文档
+    /// </summary>
+    public void UseAutoReconnect()
+    {
+        Disconnected.Subscribe(async (s) =>
+        {
+            try
+            {
+                while (true)
+                {
+                    await LaunchAsync().ConfigureAwait(false);
+                    break;
+                }
+            }
+            catch (Exception)
+            {
+            }
+        });
+    }
     /// <summary>
     ///     建立连接的QQ账号
     /// </summary>
@@ -86,7 +542,7 @@ public partial class MiraiBot : IDisposable
     ///     Mirai.Net总是需要一个VerifyKey
     /// </summary>
     public string VerifyKey { get; set; }
-    
+
     #endregion
 
     #region Handlers
@@ -94,21 +550,24 @@ public partial class MiraiBot : IDisposable
     /// <summary>
     /// 接收到事件
     /// </summary>
-    [JsonIgnore] public IObservable<EventBase> EventReceived => _eventReceivedSubject.AsObservable();
+    [JsonIgnore]
+    internal IObservable<EventBase> EventReceived => _eventReceivedSubject.AsObservable();
 
     private readonly Subject<EventBase> _eventReceivedSubject = new();
 
     /// <summary>
     /// 收到消息
     /// </summary>
-    [JsonIgnore] public IObservable<MessageReceiverBase> MessageReceived => _messageReceivedSubject.AsObservable();
+    [JsonIgnore]
+    internal IObservable<MessageReceiverBase> MessageReceived => _messageReceivedSubject.AsObservable();
 
     private readonly Subject<MessageReceiverBase> _messageReceivedSubject = new();
 
     /// <summary>
     /// 接收到未知类型的Websocket消息
     /// </summary>
-    [JsonIgnore] public IObservable<string> UnknownMessageReceived => _unknownMessageReceived.AsObservable();
+    [JsonIgnore]
+    public IObservable<string> UnknownWebsocketMessageReceived => _unknownMessageReceived.AsObservable();
 
     private readonly Subject<string> _unknownMessageReceived = new();
 
@@ -199,7 +658,7 @@ public partial class MiraiBot : IDisposable
                 ProcessWebSocketData(data);
             });
     }
-    
+
     private void ProcessWebSocketData(string data)
     {
         var dataType = data.Fetch("type");
@@ -217,12 +676,12 @@ public partial class MiraiBot : IDisposable
             {
                 throw new InvalidResponseException("Websocket传回错误的响应");
             }
-            
+
             receiver.MessageChain = rawChain
                 .ToJArray()
                 .Select(token => ReflectionUtils.GetMessageBase(token.ToString()))
                 .ToMessageChain();
-            
+
             if (receiver.MessageChain.OfType<AtMessage>().Any(x => x.Target == QQ))
             {
                 _eventReceivedSubject.OnNext(new AtEvent
@@ -230,7 +689,7 @@ public partial class MiraiBot : IDisposable
                     Receiver = (receiver as GroupMessageReceiver)!
                 });
             }
-            
+
             _messageReceivedSubject.OnNext(receiver);
         }
         else if (dataType.Contains("Event"))
@@ -245,3 +704,8 @@ public partial class MiraiBot : IDisposable
 
     #endregion
 }
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public delegate void CommonEventHandler<T>(MiraiBot sender, T args);
