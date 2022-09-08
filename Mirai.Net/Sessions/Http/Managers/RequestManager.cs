@@ -29,7 +29,7 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.NewFriendRequested.PostJsonAsync(payload);
+        _ = await HttpEndpoints.NewFriendRequested.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.MemberJoinRequested.PostJsonAsync(payload);
+        _ = await HttpEndpoints.MemberJoinRequested.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -71,6 +71,6 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.BotInvited.PostJsonAsync(payload);
+        _ = await HttpEndpoints.BotInvited.PostJsonAsync(payload).ConfigureAwait(false);
     }
 }

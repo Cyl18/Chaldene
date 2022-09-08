@@ -33,13 +33,13 @@ public static class GroupManager
             time
         };
 
-        await HttpEndpoints.Mute.PostJsonAsync(payload);
+        await HttpEndpoints.Mute.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <see cref="MuteAsync(string,string,int)" />
     public static async Task MuteAsync(string target, string group, TimeSpan time)
     {
-        await MuteAsync(target, group, Convert.ToInt32(time.TotalSeconds));
+        await MuteAsync(target, group, Convert.ToInt32(time.TotalSeconds)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -49,13 +49,13 @@ public static class GroupManager
     /// <param name="time"></param>
     public static async Task MuteAsync(this Member member, int time)
     {
-        await MuteAsync(member.Id, member.Group.Id, time);
+        await MuteAsync(member.Id, member.Group.Id, time).ConfigureAwait(false);
     }
 
     /// <see cref="MuteAsync(Member,int)" />
     public static async Task MuteAsync(this Member member, TimeSpan time)
     {
-        await MuteAsync(member.Id, member.Group.Id, time);
+        await MuteAsync(member.Id, member.Group.Id, time).ConfigureAwait(false);
     }
 
     #endregion
@@ -75,7 +75,7 @@ public static class GroupManager
             memberId = target
         };
 
-        await HttpEndpoints.Unmute.PostJsonAsync(payload);
+        await HttpEndpoints.Unmute.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public static class GroupManager
     /// <param name="member"></param>
     public static async Task UnMuteAsync(this Member member)
     {
-        await UnMuteAsync(member.Id, member.Group.Id);
+        await UnMuteAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
 
     #endregion
@@ -106,7 +106,7 @@ public static class GroupManager
             msg = message
         };
 
-        await HttpEndpoints.Kick.PostJsonAsync(payload);
+        await HttpEndpoints.Kick.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ public static class GroupManager
     /// <param name="message"></param>
     public static async Task KickAsync(this Member member, string message = "")
     {
-        await KickAsync(member.Id, member.Group.Id);
+        await KickAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
 
     #endregion
@@ -134,7 +134,7 @@ public static class GroupManager
             target
         };
 
-        await HttpEndpoints.Leave.PostJsonAsync(payload);
+        await HttpEndpoints.Leave.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public static class GroupManager
     /// <param name="group"></param>
     public static async Task LeaveAsync(this Group group)
     {
-        await LeaveAsync(group.Id);
+        await LeaveAsync(group.Id).ConfigureAwait(false);
     }
 
     #endregion
@@ -163,7 +163,7 @@ public static class GroupManager
             target
         };
 
-        await endpoint.PostJsonAsync(payload);
+        await endpoint.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -173,7 +173,7 @@ public static class GroupManager
     /// <param name="mute">是否禁言</param>
     public static async Task MuteAllAsync(this Group group, bool mute = true)
     {
-        await MuteAllAsync(group.Id, mute);
+        await MuteAllAsync(group.Id, mute).ConfigureAwait(false);
     }
 
     #endregion
@@ -192,7 +192,7 @@ public static class GroupManager
             target = messageId
         };
 
-        await HttpEndpoints.SetEssence.PostJsonAsync(payload);
+        await HttpEndpoints.SetEssence.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -202,7 +202,7 @@ public static class GroupManager
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
     public static async Task SetEssenceMessageAsync(this MessageReceiverBase receiver)
     {
-        await HttpEndpoints.SetEssence.PostJsonAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId);
+        await HttpEndpoints.SetEssence.PostJsonAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -218,7 +218,7 @@ public static class GroupManager
             target
         };
 
-        await HttpEndpoints.SetEssence.PostJsonAsync(payload);
+        await HttpEndpoints.SetEssence.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ public static class GroupManager
     /// <param name="receiver"></param>
     public static async Task SetEssenceMessageAsync(this GroupMessageReceiver receiver)
     {
-        await SetEssenceMessageAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId, receiver.GroupId);
+        await SetEssenceMessageAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId, receiver.GroupId).ConfigureAwait(false);
     }
 
     #endregion
@@ -241,7 +241,7 @@ public static class GroupManager
     /// <returns></returns>
     public static async Task<GroupSetting> GetGroupSettingAsync(string target)
     {
-        var response = await HttpEndpoints.GroupConfig.GetAsync(new { target });
+        var response = await HttpEndpoints.GroupConfig.GetAsync(new { target }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<GroupSetting>(response);
     }
@@ -253,7 +253,7 @@ public static class GroupManager
     /// <returns></returns>
     public static async Task<GroupSetting> GetGroupSettingAsync(this Group group)
     {
-        return await GetGroupSettingAsync(group.Id);
+        return await GetGroupSettingAsync(group.Id).ConfigureAwait(false);
     }
 
 
@@ -270,7 +270,7 @@ public static class GroupManager
             config = setting
         };
 
-        await HttpEndpoints.GroupConfig.PostJsonAsync(payload);
+        await HttpEndpoints.GroupConfig.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -280,7 +280,7 @@ public static class GroupManager
     /// <param name="setting"></param>
     public static async Task SetGroupSettingAsync(this Group group, GroupSetting setting)
     {
-        await SetGroupSettingAsync(group.Id, setting);
+        await SetGroupSettingAsync(group.Id, setting).ConfigureAwait(false);
     }
 
     #endregion
@@ -299,7 +299,7 @@ public static class GroupManager
         {
             target = group,
             memberId = memberQQ
-        });
+        }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<Member>(response);
     }
@@ -326,9 +326,9 @@ public static class GroupManager
             }
         };
 
-        await HttpEndpoints.MemberInfo.PostJsonAsync(payload);
+        await HttpEndpoints.MemberInfo.PostJsonAsync(payload).ConfigureAwait(false);
 
-        return await GetMemberAsync(memberQQ, group);
+        return await GetMemberAsync(memberQQ, group).ConfigureAwait(false);
     }
 
     #endregion

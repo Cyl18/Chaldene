@@ -1,4 +1,5 @@
-﻿using Mirai.Net.Sessions.Http.Managers;
+﻿using System.Threading.Tasks;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json;
 
 namespace Mirai.Net.Data.Shared;
@@ -11,7 +12,7 @@ public record Friend
     /// <summary>
     /// 好友的资料
     /// </summary>
-    [JsonIgnore] public Profile FriendProfile => this.GetFriendProfileAsync().GetAwaiter().GetResult();
+    [JsonIgnore] public Task<Profile> FriendProfile => this.GetFriendProfileAsync();
 
     /// <summary>
     ///     好友的QQ号

@@ -18,8 +18,8 @@ public static class DispatchUtils
     {
         Task.Run(async () =>
         {
-            await Task.Delay(duration);
-            await action();
+            await Task.Delay(duration).ConfigureAwait(false);
+            await action().ConfigureAwait(false);
         });
     }
     
@@ -42,7 +42,7 @@ public static class DispatchUtils
     {
         Task.Run(async () =>
         {
-            await Task.Delay(duration);
+            await Task.Delay(duration).ConfigureAwait(false);
             action();
         });
     }

@@ -21,7 +21,7 @@ public static class MessageManager
 
     private static async Task<string> SendMessageAsync(HttpEndpoints endpoints, object payload)
     {
-        var response = await endpoints.PostJsonAsync(payload);
+        var response = await endpoints.PostJsonAsync(payload).ConfigureAwait(false);
 
         return response.Fetch("messageId");
     }
@@ -41,7 +41,7 @@ public static class MessageManager
         var response = await HttpEndpoints.MessageFromId.GetAsync(new
         {
             id = messageId
-        });
+        }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<T>(response);
     }
@@ -59,7 +59,7 @@ public static class MessageManager
         {
             id = messageId,
             target
-        });
+        }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<T>(response);
     }
@@ -78,7 +78,7 @@ public static class MessageManager
             timeStart,
             timeEnd,
             target
-        });
+        }).ConfigureAwait(false);
 
         return ((JArray)response.ToJObject()["data"]).Values<MessageChain>();
     }
@@ -97,7 +97,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendFriendMessageAsync(this Friend friend, MessageChain chain)
     {
-        return await SendFriendMessageAsync(friend.Id, chain);
+        return await SendFriendMessageAsync(friend.Id, chain).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendGroupMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendGroupMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendGroupMessageAsync(this Group group, MessageChain chain)
     {
-        return await SendGroupMessageAsync(group.Id, chain);
+        return await SendGroupMessageAsync(group.Id, chain).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -166,7 +166,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendTempMessageAsync(this Member member, MessageChain chain)
     {
-        return await SendTempMessageAsync(member.Id, member.Group.Id, chain);
+        return await SendTempMessageAsync(member.Id, member.Group.Id, chain).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -184,7 +184,7 @@ public static class MessageManager
             kind = kind.ToString()
         };
 
-        await HttpEndpoints.SendNudge.PostJsonAsync(payload);
+        await HttpEndpoints.SendNudge.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ public static class MessageManager
             target = messageId
         };
 
-        await HttpEndpoints.Recall.PostJsonAsync(payload);
+        await HttpEndpoints.Recall.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -215,7 +215,7 @@ public static class MessageManager
             messageId
         };
 
-        await HttpEndpoints.Recall.PostJsonAsync(payload);
+        await HttpEndpoints.Recall.PostJsonAsync(payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -235,7 +235,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendFriendMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -248,7 +248,7 @@ public static class MessageManager
     public static async Task<string> QuoteFriendMessageAsync(this Friend friend, string messageId,
         MessageChain chain)
     {
-        return await QuoteFriendMessageAsync(friend.Id, messageId, chain);
+        return await QuoteFriendMessageAsync(friend.Id, messageId, chain).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -267,7 +267,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendGroupMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendGroupMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -280,7 +280,7 @@ public static class MessageManager
     public static async Task<string> QuoteGroupMessageAsync(this Group group, string messageId,
         MessageChain chain)
     {
-        return await QuoteGroupMessageAsync(group.Id, messageId, chain);
+        return await QuoteGroupMessageAsync(group.Id, messageId, chain).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -302,7 +302,7 @@ public static class MessageManager
             messageChain = chain
         };
 
-        return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload);
+        return await SendMessageAsync(HttpEndpoints.SendTempMessage, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ public static class MessageManager
     public static async Task<string> QuoteTempMessageAsync(this Member member, string messageId,
         MessageChain chain)
     {
-        return await QuoteTempMessageAsync(member.Group.Id, member.Group.Id, messageId, chain);
+        return await QuoteTempMessageAsync(member.Group.Id, member.Group.Id, messageId, chain).ConfigureAwait(false);
     }
 
     #endregion
@@ -330,7 +330,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendFriendMessageAsync(string target, string message)
     {
-        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build());
+        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -341,7 +341,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendFriendMessageAsync(this Friend target, string message)
     {
-        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build());
+        return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
 
@@ -354,7 +354,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendTempMessageAsync(string target, string group, string message)
     {
-        return await SendTempMessageAsync(target, group, new MessageChainBuilder().Plain(message).Build());
+        return await SendTempMessageAsync(target, group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -365,7 +365,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendTempMessageAsync(this Member member, string message)
     {
-        return await SendTempMessageAsync(member, new MessageChainBuilder().Plain(message).Build());
+        return await SendTempMessageAsync(member, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -376,7 +376,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendGroupMessageAsync(string target, string message)
     {
-        return await SendGroupMessageAsync(target, new MessageChainBuilder().Plain(message).Build());
+        return await SendGroupMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -387,7 +387,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> SendGroupMessageAsync(this Group group, string message)
     {
-        return await SendGroupMessageAsync(group, new MessageChainBuilder().Plain(message).Build());
+        return await SendGroupMessageAsync(group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -399,7 +399,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> QuoteFriendMessageAsync(string target, string messageId, string message)
     {
-        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> QuoteFriendMessageAsync(this Friend target, string messageId, string message)
     {
-        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -423,7 +423,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> QuoteGroupMessageAsync(string target, string messageId, string message)
     {
-        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -435,7 +435,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> QuoteGroupMessageAsync(this Group target, string messageId, string message)
     {
-        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -449,7 +449,7 @@ public static class MessageManager
     public static async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
         string message)
     {
-        return await QuoteTempMessageAsync(memberId, group, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteTempMessageAsync(memberId, group, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -461,7 +461,7 @@ public static class MessageManager
     /// <returns></returns>
     public static async Task<string> QuoteTempMessageAsync(this Member member, string messageId, string message)
     {
-        return await QuoteTempMessageAsync(member, messageId, new MessageChainBuilder().Plain(message).Build());
+        return await QuoteTempMessageAsync(member, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
 
     #endregion

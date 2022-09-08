@@ -63,7 +63,7 @@ public partial class MessageChain : List<MessageBase>
     /// <returns></returns>
     public async Task<string> SendToAsync(GroupMessageReceiver receiver)
     {
-        return await receiver.SendMessageAsync(this);
+        return await receiver.SendMessageAsync(this).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -73,7 +73,7 @@ public partial class MessageChain : List<MessageBase>
     /// <returns></returns>
     public async Task<string> SendToAsync(FriendMessageReceiver receiver)
     {
-        return await receiver.SendMessageAsync(this);
+        return await receiver.SendMessageAsync(this).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -83,7 +83,7 @@ public partial class MessageChain : List<MessageBase>
     /// <returns></returns>
     public async Task<string> SendToAsync(TempMessageReceiver receiver)
     {
-        return await receiver.SendMessageAsync(this);
+        return await receiver.SendMessageAsync(this).ConfigureAwait(false);
     }
 
     /// <summary>

@@ -18,7 +18,7 @@ public static class AccountManager
 
     private static async Task<IEnumerable<T>> GetCollectionAsync<T>(HttpEndpoints endpoints, object extra = null)
     {
-        var raw = await endpoints.GetAsync(extra);
+        var raw = await endpoints.GetAsync(extra).ConfigureAwait(false);
         raw = raw.Fetch("data");
 
         return raw.ToJArray().Select(x => x.ToObject<T>());
@@ -26,7 +26,7 @@ public static class AccountManager
 
     private static async Task<Profile> GetProfileAsync(HttpEndpoints endpoints, object extra = null)
     {
-        var raw = await endpoints.GetAsync(extra);
+        var raw = await endpoints.GetAsync(extra).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<Profile>(raw);
     }
@@ -40,7 +40,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<IEnumerable<Friend>> GetFriendsAsync()
     {
-        return await GetCollectionAsync<Friend>(HttpEndpoints.FriendList);
+        return await GetCollectionAsync<Friend>(HttpEndpoints.FriendList).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<IEnumerable<Group>> GetGroupsAsync()
     {
-        return await GetCollectionAsync<Group>(HttpEndpoints.GroupList);
+        return await GetCollectionAsync<Group>(HttpEndpoints.GroupList).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class AccountManager
         return await GetCollectionAsync<Member>(HttpEndpoints.MemberList, new
         {
             target
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<IEnumerable<Member>> GetGroupMembersAsync(this Group target)
     {
-        return await GetGroupMembersAsync(target.Id);
+        return await GetGroupMembersAsync(target.Id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public static class AccountManager
         _ = await HttpEndpoints.DeleteFriend.PostJsonAsync(new
         {
             target
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public static class AccountManager
     /// <param name="friend"></param>
     public static async Task DeleteFriendAsync(this Friend friend)
     {
-        await DeleteFriendAsync(friend.Id);
+        await DeleteFriendAsync(friend.Id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<Profile> GetBotProfileAsync()
     {
-        return await GetProfileAsync(HttpEndpoints.BotProfile);
+        return await GetProfileAsync(HttpEndpoints.BotProfile).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public static class AccountManager
         return await GetProfileAsync(HttpEndpoints.FriendProfile, new
         {
             target
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<Profile> GetFriendProfileAsync(this Friend target)
     {
-        return await GetFriendProfileAsync(target.Id);
+        return await GetFriendProfileAsync(target.Id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ public static class AccountManager
         {
             target,
             memberId = id
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ public static class AccountManager
     /// </summary>
     public static async Task<Profile> GetMemberProfileAsync(this Member member)
     {
-        return await GetMemberProfileAsync(member.Id, member.Group.Id);
+        return await GetMemberProfileAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ public static class AccountManager
         return await GetProfileAsync(HttpEndpoints.UserProfile, new
         {
             target
-        });
+        }).ConfigureAwait(false);
     }
 
     #endregion

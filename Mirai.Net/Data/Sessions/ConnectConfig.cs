@@ -33,6 +33,23 @@ public record ConnectConfig
             WebsocketAddress = address
         };
     }
+    
+    /// <summary>
+    /// 实例化一个连接配置
+    /// </summary>
+    public ConnectConfig()
+    {
+    }
+
+    /// <summary>
+    /// 从地址构造连接配置, HTTP 和 Websocket 地址相同
+    /// </summary>
+    /// <param name="address"></param>
+    public ConnectConfig(string address)
+    {
+        HttpAddress = address;
+        WebsocketAddress = address;
+    }
 
     /// <summary>
     /// 连接配置转换成地址
@@ -48,6 +65,16 @@ public record ConnectConfig
         }
 
         return $"{config.HttpAddress.Host}:{config.HttpAddress.Port}";
+    }
+    
+    /// <summary>
+    /// 从地址构造连接配置
+    /// </summary>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static implicit operator AdapterConfig(ConnectConfig config)
+    {
+        return config.HttpAddress;
     }
 
     /// <summary>

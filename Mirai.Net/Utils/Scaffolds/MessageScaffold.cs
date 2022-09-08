@@ -189,10 +189,10 @@ public static class MessageScaffold
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
     public static async Task RecallAfter(this Task<string> messageIdTask, TimeSpan duration)
     {
-        var messageId = await messageIdTask;
+        var messageId = await messageIdTask.ConfigureAwait(false);
         DispatchUtils.ExecuteScheduledActionAsync(duration, async () =>
         {
-            await MessageManager.RecallAsync(messageId);
+            await MessageManager.RecallAsync(messageId).ConfigureAwait(false);
         });
     }
 
@@ -204,7 +204,7 @@ public static class MessageScaffold
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
     public static async Task RecallAfter(this Task<string> messageIdTask, int milliseconds)
     {
-        await messageIdTask.RecallAfter(TimeSpan.FromMilliseconds(milliseconds));
+        await messageIdTask.RecallAfter(TimeSpan.FromMilliseconds(milliseconds)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -214,12 +214,12 @@ public static class MessageScaffold
     /// <param name="duration"></param>
     public static async Task RecallAfter(this Task<KeyValuePair<string, string>> messageIdAndTargetTask, TimeSpan duration)
     {
-        var result = await messageIdAndTargetTask;
+        var result = await messageIdAndTargetTask.ConfigureAwait(false);
         var messageId = result.Key;
         var target = result.Value;
         DispatchUtils.ExecuteScheduledActionAsync(duration, async () =>
         {
-            await MessageManager.RecallAsync(messageId, target);
+            await MessageManager.RecallAsync(messageId, target).ConfigureAwait(false);
         });
     }
 
@@ -230,7 +230,7 @@ public static class MessageScaffold
     /// <param name="milliseconds"></param>
     public static async Task RecallAfter(this Task<KeyValuePair<string, string>> messageIdAndTargetTask, int milliseconds)
     {
-        await messageIdAndTargetTask.RecallAfter(TimeSpan.FromMilliseconds(milliseconds));
+        await messageIdAndTargetTask.RecallAfter(TimeSpan.FromMilliseconds(milliseconds)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -242,7 +242,7 @@ public static class MessageScaffold
     {
         DispatchUtils.ExecuteScheduledActionAsync(duration, async () =>
         {
-            await messageTask;
+            await messageTask.ConfigureAwait(false);
         });
     }
 

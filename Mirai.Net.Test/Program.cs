@@ -24,16 +24,12 @@ namespace Mirai.Net.Test
             
             var bot = new MiraiBot
             {
-                Address = new ConnectConfig
-                {
-                    HttpAddress = new ConnectConfig.AdapterConfig("localhost", "8080"),
-                    WebsocketAddress = new ConnectConfig.AdapterConfig("localhost", "8080")
-                },
+                Address = "localhost:8080",
                 VerifyKey = "1145141919810",
                 QQ = "1590454991"
             };
             
-            await bot.LaunchAsync();
+            await bot.LaunchAsync().ConfigureAwait(false);
             
             bot.MessageReceived
                 .OfType<GroupMessageReceiver>()
@@ -45,6 +41,8 @@ namespace Mirai.Net.Test
                         ums.Output(x => x.ToJsonString());
                     }
                 });
+            
+            
 
             Console.WriteLine("launched");
             exit.WaitOne();

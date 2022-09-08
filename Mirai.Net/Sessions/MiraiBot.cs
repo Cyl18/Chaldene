@@ -33,7 +33,7 @@ public class MiraiBot : IDisposable
     /// </summary>
     public async void Dispose()
     {
-        await ReleaseAsync();
+        await ReleaseAsync().ConfigureAwait(false);
         _client.Dispose();
     }
 
@@ -47,9 +47,9 @@ public class MiraiBot : IDisposable
         Instance = this;
 
 
-        await VerifyAsync();
-        await BindAsync();
-        await StartWebsocketListenerAsync();
+        await VerifyAsync().ConfigureAwait(false);
+        await BindAsync().ConfigureAwait(false);
+        await StartWebsocketListenerAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -133,9 +133,9 @@ public class MiraiBot : IDisposable
     /// Websocket断开连接
     /// </summary>
     [JsonIgnore]
-    public IObservable<WebSocketCloseStatus> DisconnectionHappened => _disconnectionHappened.AsObservable();
+    public IObservable<WebSocketCloseStatus> Disconnected => _disconnected.AsObservable();
 
-    private readonly Subject<WebSocketCloseStatus> _disconnectionHappened = new();
+    private readonly Subject<WebSocketCloseStatus> _disconnected = new();
 
     #endregion
 
@@ -150,7 +150,7 @@ public class MiraiBot : IDisposable
         var result = await HttpEndpoints.Verify.PostJsonAsync(new
         {
             verifyKey = VerifyKey
-        }, false);
+        }, false).ConfigureAwait(false);
 
         HttpSessionKey = result.Fetch("session");
     }
@@ -164,7 +164,7 @@ public class MiraiBot : IDisposable
         {
             sessionKey = HttpSessionKey,
             qq = QQ
-        }, false);
+        }, false).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -176,7 +176,7 @@ public class MiraiBot : IDisposable
         {
             sessionKey = HttpSessionKey,
             qq = QQ
-        }, false);
+        }, false).ConfigureAwait(false);
     }
 
     #endregion
@@ -198,10 +198,10 @@ public class MiraiBot : IDisposable
             IsReconnectionEnabled = false
         };
 
-        await _client.StartOrFail();
+        await _client.StartOrFail().ConfigureAwait(false);
 
         _client.DisconnectionHappened
-            .Subscribe(x => { _disconnectionHappened.OnNext(x.CloseStatus ?? WebSocketCloseStatus.Empty); });
+            .Subscribe(x => { _disconnected.OnNext(x.CloseStatus ?? WebSocketCloseStatus.Empty); });
 
         _client.MessageReceived
             .Where(message => message.MessageType == WebSocketMessageType.Text)

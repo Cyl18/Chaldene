@@ -32,7 +32,7 @@ public static class FileManager
             target,
             withDownloadInfo,
             id = folderId
-        });
+        }).ConfigureAwait(false);
 
         var arr = result.Fetch("data").ToJArray();
 
@@ -53,7 +53,7 @@ public static class FileManager
             target,
             id = fileId,
             withDownloadInfo
-        });
+        }).ConfigureAwait(false);
 
         return result.FetchJToken("data").ToObject<File>();
     }
@@ -71,7 +71,7 @@ public static class FileManager
             id = "",
             target,
             directoryName = name
-        });
+        }).ConfigureAwait(false);
 
         return result.FetchJToken("data").ToObject<File>();
     }
@@ -87,7 +87,7 @@ public static class FileManager
         {
             target,
             id = fileId
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public static class FileManager
             target,
             id = fileId,
             movoTo = destination
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public static class FileManager
             target,
             id = fileId,
             renameTo = newName
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -141,9 +141,9 @@ public static class FileManager
                 .AddString("type", "group")
                 .AddString("path", uploadPath)
                 .AddString("target", target)
-                .AddFile("file", filePath));
+                .AddFile("file", filePath)).ConfigureAwait(false);
 
-        var response = await result.GetStringAsync();
+        var response = await result.GetStringAsync().ConfigureAwait(false);
         response.EnsureSuccess("这大抵是个玄学问题罢。");
         
         var re = response.ToJObject();
@@ -166,9 +166,9 @@ public static class FileManager
             .WithHeader("Authorization", $"session {MiraiBot.Instance.HttpSessionKey}")
             .PostMultipartAsync(x => x
                 .AddString("type", imageUploadTargets.GetDescription())
-                .AddFile("img", imagePath));
+                .AddFile("img", imagePath)).ConfigureAwait(false);
 
-        var re = await result.GetStringAsync();
+        var re = await result.GetStringAsync().ConfigureAwait(false);
         re.EnsureSuccess("这大抵是个玄学问题罢。");
 
         return (re.Fetch("imageId"), re.Fetch("url"));
@@ -187,9 +187,9 @@ public static class FileManager
             .WithHeader("Authorization", $"session {MiraiBot.Instance.HttpSessionKey}")
             .PostMultipartAsync(x => x
                 .AddString("type", "group")
-                .AddFile("voice", voicePath));
+                .AddFile("voice", voicePath)).ConfigureAwait(false);
 
-        var re = await result.GetStringAsync();
+        var re = await result.GetStringAsync().ConfigureAwait(false);
         re.EnsureSuccess("这大抵是个玄学问题罢。");
 
         return (re.Fetch("voiceId"), re.Fetch("url"));
