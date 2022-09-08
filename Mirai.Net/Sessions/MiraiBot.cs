@@ -514,7 +514,7 @@ public partial class MiraiBot : IDisposable
     /// </summary>
     public void UseAutoReconnect()
     {
-        Disconnected.Subscribe(async (s) =>
+        Disconnected += async (_, s) =>
         {
             try
             {
@@ -527,7 +527,7 @@ public partial class MiraiBot : IDisposable
             catch (Exception)
             {
             }
-        });
+        };
     }
     /// <summary>
     ///     建立连接的QQ账号
@@ -562,22 +562,32 @@ public partial class MiraiBot : IDisposable
     internal IObservable<MessageReceiverBase> MessageReceived => _messageReceivedSubject.AsObservable();
 
     private readonly Subject<MessageReceiverBase> _messageReceivedSubject = new();
-
+    
     /// <summary>
     /// 接收到未知类型的Websocket消息
     /// </summary>
-    [JsonIgnore]
-    public IObservable<string> UnknownWebsocketMessageReceived => _unknownMessageReceived.AsObservable();
+    public event CommonEventHandler<string> UnknownWebsocketMessageReceived
+    {
+        add => _unknownMessageReceived.Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    } 
+
+    
 
     private readonly Subject<string> _unknownMessageReceived = new();
 
     /// <summary>
     /// Websocket断开连接
     /// </summary>
-    [JsonIgnore]
-    public IObservable<WebSocketCloseStatus> Disconnected => _disconnected.AsObservable();
+    public event CommonEventHandler<WebSocketCloseStatus> Disconnected
+    {
+        add => _disconnected.Subscribe(receiver => value.Invoke(this, receiver));
+        remove => throw new NotImplementedException();
+    }
+    
 
     private readonly Subject<WebSocketCloseStatus> _disconnected = new();
+    
 
     #endregion
 
