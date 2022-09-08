@@ -1,4 +1,5 @@
 ﻿using Manganese.Text;
+using Mirai.Net.Sessions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -31,4 +32,8 @@ public record EventBase
     {
         return this.ToJsonString();
     }
+    
+    [JsonIgnore]
+    public MiraiBot Bot { get; set; }
+
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Mirai.Net.Sessions;
+using Newtonsoft.Json;
 
 namespace Mirai.Net.Data.Events.Concretes.Request;
 
@@ -31,4 +32,5 @@ public record class RequestedEventBase : EventBase
     /// 附加消息
     /// </summary>
     [JsonProperty("message")] public string Message { get; set; }
+    
 }

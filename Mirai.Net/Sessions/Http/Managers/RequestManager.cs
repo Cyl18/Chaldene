@@ -2,14 +2,14 @@
 using Mirai.Net.Data.Events.Concretes.Request;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
-using Mirai.Net.Utils.Internal;
 
-namespace Mirai.Net.Sessions.Http.Managers;
+
+namespace Mirai.Net.Sessions;
 
 /// <summary>
 /// 请求管理器
 /// </summary>
-public static class RequestManager
+public partial class MiraiBot
 {
     /// <summary>
     ///     处理好友申请
@@ -17,7 +17,7 @@ public static class RequestManager
     /// <param name="requestedEvent"></param>
     /// <param name="handler"></param>
     /// <param name="message"></param>
-    public static async Task HandleNewFriendRequestedAsync(NewFriendRequestedEvent requestedEvent,
+    public async Task HandleNewFriendRequestedAsync(NewFriendRequestedEvent requestedEvent,
         NewFriendRequestHandlers handler, string message = "")
     {
         var payload = new
@@ -29,7 +29,7 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.NewFriendRequested.PostJsonAsync(payload).ConfigureAwait(false);
+        _ = await PostJsonAsync(HttpEndpoints.NewFriendRequested, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public static class RequestManager
     /// <param name="requestedEvent"></param>
     /// <param name="handler"></param>
     /// <param name="message"></param>
-    public static async Task HandleNewMemberRequestedAsync(NewMemberRequestedEvent requestedEvent,
+    public async Task HandleNewMemberRequestedAsync(NewMemberRequestedEvent requestedEvent,
         NewMemberRequestHandlers handler, string message = "")
     {
         var payload = new
@@ -50,7 +50,7 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.MemberJoinRequested.PostJsonAsync(payload).ConfigureAwait(false);
+        _ = await PostJsonAsync(HttpEndpoints.MemberJoinRequested, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class RequestManager
     /// <param name="requestedEvent"></param>
     /// <param name="handler"></param>
     /// <param name="message"></param>
-    public static async Task HandleNewInvitationRequestedAsync(NewInvitationRequestedEvent requestedEvent,
+    public async Task HandleNewInvitationRequestedAsync(NewInvitationRequestedEvent requestedEvent,
         NewInvitationRequestHandlers handler, string message)
     {
         var payload = new
@@ -71,6 +71,6 @@ public static class RequestManager
             message
         };
 
-        _ = await HttpEndpoints.BotInvited.PostJsonAsync(payload).ConfigureAwait(false);
+        _ = await PostJsonAsync(HttpEndpoints.BotInvited, payload).ConfigureAwait(false);
     }
 }

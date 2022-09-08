@@ -6,15 +6,14 @@ using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
-using Mirai.Net.Utils.Internal;
 using Newtonsoft.Json;
 
-namespace Mirai.Net.Sessions.Http.Managers;
+namespace Mirai.Net.Sessions;
 
 /// <summary>
 /// 群管理器
 /// </summary>
-public static class GroupManager
+public partial class MiraiBot
 {
     #region Mute
 
@@ -24,7 +23,7 @@ public static class GroupManager
     /// <param name="target"></param>
     /// <param name="group"></param>
     /// <param name="time"></param>
-    public static async Task MuteAsync(string target, string group, int time)
+    public async Task MuteAsync(string target, string group, int time)
     {
         var payload = new
         {
@@ -33,11 +32,11 @@ public static class GroupManager
             time
         };
 
-        await HttpEndpoints.Mute.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Mute, payload).ConfigureAwait(false);
     }
 
     /// <see cref="MuteAsync(string,string,int)" />
-    public static async Task MuteAsync(string target, string group, TimeSpan time)
+    public async Task MuteAsync(string target, string group, TimeSpan time)
     {
         await MuteAsync(target, group, Convert.ToInt32(time.TotalSeconds)).ConfigureAwait(false);
     }
@@ -47,13 +46,13 @@ public static class GroupManager
     /// </summary>
     /// <param name="member"></param>
     /// <param name="time"></param>
-    public static async Task MuteAsync(this Member member, int time)
+    public async Task MuteAsync(Member member, int time)
     {
         await MuteAsync(member.Id, member.Group.Id, time).ConfigureAwait(false);
     }
 
     /// <see cref="MuteAsync(Member,int)" />
-    public static async Task MuteAsync(this Member member, TimeSpan time)
+    public async Task MuteAsync(Member member, TimeSpan time)
     {
         await MuteAsync(member.Id, member.Group.Id, time).ConfigureAwait(false);
     }
@@ -67,7 +66,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="target"></param>
     /// <param name="group"></param>
-    public static async Task UnMuteAsync(string target, string group)
+    public async Task UnMuteAsync(string target, string group)
     {
         var payload = new
         {
@@ -75,14 +74,14 @@ public static class GroupManager
             memberId = target
         };
 
-        await HttpEndpoints.Unmute.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Unmute, payload).ConfigureAwait(false);
     }
 
     /// <summary>
     ///     取消禁言
     /// </summary>
     /// <param name="member"></param>
-    public static async Task UnMuteAsync(this Member member)
+    public async Task UnMuteAsync(Member member)
     {
         await UnMuteAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
@@ -97,7 +96,7 @@ public static class GroupManager
     /// <param name="target"></param>
     /// <param name="group"></param>
     /// <param name="message"></param>
-    public static async Task KickAsync(string target, string group, string message = "")
+    public async Task KickAsync(string target, string group, string message = "")
     {
         var payload = new
         {
@@ -106,7 +105,7 @@ public static class GroupManager
             msg = message
         };
 
-        await HttpEndpoints.Kick.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Kick, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -114,7 +113,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="member"></param>
     /// <param name="message"></param>
-    public static async Task KickAsync(this Member member, string message = "")
+    public async Task KickAsync(Member member, string message = "")
     {
         await KickAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
@@ -127,21 +126,21 @@ public static class GroupManager
     ///     bot退出某群
     /// </summary>
     /// <param name="target"></param>
-    public static async Task LeaveAsync(string target)
+    public  async Task LeaveAsync(string target)
     {
         var payload = new
         {
             target
         };
 
-        await HttpEndpoints.Leave.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Leave, payload).ConfigureAwait(false);
     }
 
     /// <summary>
     ///     bot退出某群
     /// </summary>
     /// <param name="group"></param>
-    public static async Task LeaveAsync(this Group group)
+    public  async Task LeaveAsync(Group group)
     {
         await LeaveAsync(group.Id).ConfigureAwait(false);
     }
@@ -155,7 +154,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="target"></param>
     /// <param name="mute">是否禁言</param>
-    public static async Task MuteAllAsync(string target, bool mute = true)
+    public  async Task MuteAllAsync(string target, bool mute = true)
     {
         var endpoint = mute ? HttpEndpoints.MuteAll : HttpEndpoints.UnmuteAll;
         var payload = new
@@ -163,7 +162,7 @@ public static class GroupManager
             target
         };
 
-        await endpoint.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(endpoint, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -171,7 +170,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="group"></param>
     /// <param name="mute">是否禁言</param>
-    public static async Task MuteAllAsync(this Group group, bool mute = true)
+    public  async Task MuteAllAsync(Group group, bool mute = true)
     {
         await MuteAllAsync(group.Id, mute).ConfigureAwait(false);
     }
@@ -185,14 +184,14 @@ public static class GroupManager
     /// </summary>
     /// <param name="messageId">消息id</param>
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
-    public static async Task SetEssenceMessageAsync(string messageId)
+    public  async Task SetEssenceMessageAsync(string messageId)
     {
         var payload = new
         {
             target = messageId
         };
 
-        await HttpEndpoints.SetEssence.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.SetEssence, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -200,9 +199,9 @@ public static class GroupManager
     /// </summary>
     /// <param name="receiver"></param>
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
-    public static async Task SetEssenceMessageAsync(this MessageReceiverBase receiver)
-    {
-        await HttpEndpoints.SetEssence.PostJsonAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId).ConfigureAwait(false);
+    public  async Task SetEssenceMessageAsync(MessageReceiverBase receiver)
+    {// todo 重构这里 
+        await PostJsonAsync(HttpEndpoints.SetEssence, receiver.MessageChain.OfType<SourceMessage>().First().MessageId).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -210,7 +209,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="messageId">消息id</param>
     /// <param name="target">群id</param>
-    public static async Task SetEssenceMessageAsync(string messageId, string target)
+    public  async Task SetEssenceMessageAsync(string messageId, string target)
     {
         var payload = new
         {
@@ -218,14 +217,14 @@ public static class GroupManager
             target
         };
 
-        await HttpEndpoints.SetEssence.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.SetEssence, payload).ConfigureAwait(false);
     }
 
     /// <summary>
     ///     设置精华消息
     /// </summary>
     /// <param name="receiver"></param>
-    public static async Task SetEssenceMessageAsync(this GroupMessageReceiver receiver)
+    public  async Task SetEssenceMessageAsync(GroupMessageReceiver receiver)
     {
         await SetEssenceMessageAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId, receiver.GroupId).ConfigureAwait(false);
     }
@@ -239,9 +238,9 @@ public static class GroupManager
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    public static async Task<GroupSetting> GetGroupSettingAsync(string target)
+    public  async Task<GroupSetting> GetGroupSettingAsync(string target)
     {
-        var response = await HttpEndpoints.GroupConfig.GetAsync(new { target }).ConfigureAwait(false);
+        var response = await GetAsync(HttpEndpoints.GroupConfig, new { target }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<GroupSetting>(response);
     }
@@ -251,7 +250,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="group"></param>
     /// <returns></returns>
-    public static async Task<GroupSetting> GetGroupSettingAsync(this Group group)
+    public  async Task<GroupSetting> GetGroupSettingAsync(Group group)
     {
         return await GetGroupSettingAsync(group.Id).ConfigureAwait(false);
     }
@@ -262,7 +261,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="target"></param>
     /// <param name="setting"></param>
-    public static async Task SetGroupSettingAsync(string target, GroupSetting setting)
+    public  async Task SetGroupSettingAsync(string target, GroupSetting setting)
     {
         var payload = new
         {
@@ -270,7 +269,7 @@ public static class GroupManager
             config = setting
         };
 
-        await HttpEndpoints.GroupConfig.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.GroupConfig, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -278,7 +277,7 @@ public static class GroupManager
     /// </summary>
     /// <param name="group"></param>
     /// <param name="setting"></param>
-    public static async Task SetGroupSettingAsync(this Group group, GroupSetting setting)
+    public  async Task SetGroupSettingAsync(Group group, GroupSetting setting)
     {
         await SetGroupSettingAsync(group.Id, setting).ConfigureAwait(false);
     }
@@ -293,9 +292,9 @@ public static class GroupManager
     /// <param name="memberQQ"></param>
     /// <param name="group"></param>
     /// <returns></returns>
-    public static async Task<Member> GetMemberAsync(string memberQQ, string group)
+    public  async Task<Member> GetMemberAsync(string memberQQ, string group)
     {
-        var response = await HttpEndpoints.MemberInfo.GetAsync(new
+        var response = await GetAsync(HttpEndpoints.MemberInfo, new
         {
             target = group,
             memberId = memberQQ
@@ -312,7 +311,7 @@ public static class GroupManager
     /// <param name="card">群名片, 需要管理员权限</param>
     /// <param name="title">群头衔, 需要群主权限</param>
     /// <returns></returns>
-    public static async Task<Member> SetMemberInfoAsync(string memberQQ, string group, string card = null,
+    public  async Task<Member> SetMemberInfoAsync(string memberQQ, string group, string card = null,
         string title = null)
     {
         var payload = new
@@ -326,7 +325,7 @@ public static class GroupManager
             }
         };
 
-        await HttpEndpoints.MemberInfo.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.MemberInfo, payload).ConfigureAwait(false);
 
         return await GetMemberAsync(memberQQ, group).ConfigureAwait(false);
     }

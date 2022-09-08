@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,11 +7,7 @@ using Manganese.Array;
 using Manganese.Text;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
-using Mirai.Net.Data.Sessions;
 using Mirai.Net.Sessions;
-using Mirai.Net.Sessions.Http.Managers;
-using Mirai.Net.Utils.Internal;
-using Mirai.Net.Utils.Scaffolds;
 
 namespace Mirai.Net.Test
 {

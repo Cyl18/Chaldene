@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Mirai.Net.Sessions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -20,4 +20,7 @@ public record MessageReceiverBase
     /// 接受到的消息链
     /// </summary>
     [JsonProperty("messageChain")] public MessageChain MessageChain { get; set; }
+    
+    [JsonIgnore]
+    public MiraiBot Bot { get; set; }
 }

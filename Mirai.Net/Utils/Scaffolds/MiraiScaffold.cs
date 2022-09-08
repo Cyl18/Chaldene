@@ -8,10 +8,7 @@ using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
-using Mirai.Net.Modules;
 using Mirai.Net.Sessions;
-using Mirai.Net.Sessions.Http.Managers;
-using Mirai.Net.Utils.Internal;
 
 namespace Mirai.Net.Utils.Scaffolds;
 
@@ -30,9 +27,9 @@ public static class MiraiScaffold
     {
         try
         {
-            var response = await HttpEndpoints.About.GetAsync().ConfigureAwait(false);
+            var response = await bot.GetAsync(HttpEndpoints.About).ConfigureAwait(false);
 
-            response.EnsureSuccess(response);
+            bot.EnsureSuccess(response, response);
 
             return response.Fetch("data.version");
         }
@@ -42,38 +39,38 @@ public static class MiraiScaffold
         }
     }
 
-    /// <summary>
-    /// 判断某QQ号是否为bot账号的好友
-    /// </summary>
-    /// <param name="bot"></param>
-    /// <param name="qq"></param>
-    /// <returns></returns>
-    public static bool IsFriend(this MiraiBot bot, string qq)
-    {
-        return bot.Friends.Value.Any(x => x.Id == qq);
-    }
-
-    /// <summary>
-    /// 判断某群成员是否是bot账号的好友
-    /// </summary>
-    /// <param name="bot"></param>
-    /// <param name="member"></param>
-    /// <returns></returns>
-    public static bool IsFriend(this MiraiBot bot, Member member)
-    {
-        return bot.Friends.Value.Any(x => x.Id == member.Id);
-    }
-
-    /// <summary>
-    /// 判断某人是否是bot账号的好友
-    /// </summary>
-    /// <param name="bot"></param>
-    /// <param name="friend"></param>
-    /// <returns></returns>
-    public static bool IsFriend(this MiraiBot bot, Friend friend)
-    {
-        return bot.Friends.Value.Any(x => x.Id == friend.Id);
-    }
+    // /// <summary>
+    // /// 判断某QQ号是否为bot账号的好友
+    // /// </summary>
+    // /// <param name="bot"></param>
+    // /// <param name="qq"></param>
+    // /// <returns></returns>
+    // public static bool IsFriend(this MiraiBot bot, string qq)
+    // {
+    //     return bot.Friends.Value.Any(x => x.Id == qq);
+    // }
+    //
+    // /// <summary>
+    // /// 判断某群成员是否是bot账号的好友
+    // /// </summary>
+    // /// <param name="bot"></param>
+    // /// <param name="member"></param>
+    // /// <returns></returns>
+    // public static bool IsFriend(this MiraiBot bot, Member member)
+    // {
+    //     return bot.Friends.Value.Any(x => x.Id == member.Id);
+    // }
+    //
+    // /// <summary>
+    // /// 判断某人是否是bot账号的好友
+    // /// </summary>
+    // /// <param name="bot"></param>
+    // /// <param name="friend"></param>
+    // /// <returns></returns>
+    // public static bool IsFriend(this MiraiBot bot, Friend friend)
+    // {
+    //     return bot.Friends.Value.Any(x => x.Id == friend.Id);
+    // }
 
     #endregion
 
@@ -103,7 +100,7 @@ public static class MiraiScaffold
     public static async Task<string> SendMessageAsync(this GroupMessageReceiver receiver,
         MessageChain chain)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendGroupMessageAsync(receiver.Sender.Group.Id, chain).ConfigureAwait(false);
     }
 
@@ -116,7 +113,7 @@ public static class MiraiScaffold
     public static async Task<string> SendMessageAsync(this FriendMessageReceiver receiver,
         MessageChain chain)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendFriendMessageAsync(receiver.Sender.Id, chain).ConfigureAwait(false);
     }
 
@@ -128,7 +125,7 @@ public static class MiraiScaffold
     /// <returns></returns>
     public static async Task<string> SendMessageAsync(this TempMessageReceiver receiver, MessageChain chain)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendTempMessageAsync(receiver.Sender.Id, receiver.Sender.Group.Id, chain).ConfigureAwait(false);
     }
 
@@ -140,7 +137,7 @@ public static class MiraiScaffold
     /// <returns></returns>
     public static async Task<string> SendMessageAsync(this GroupMessageReceiver receiver, string message)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendGroupMessageAsync(receiver.Sender.Group.Id, message).ConfigureAwait(false);
     }
 
@@ -152,7 +149,7 @@ public static class MiraiScaffold
     /// <returns></returns>
     public static async Task<string> SendMessageAsync(this FriendMessageReceiver receiver, string message)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendFriendMessageAsync(receiver.Sender.Id, message).ConfigureAwait(false);
     }
 
@@ -164,7 +161,7 @@ public static class MiraiScaffold
     /// <returns></returns>
     public static async Task<string> SendMessageAsync(this TempMessageReceiver receiver, string message)
     {
-        return await MessageManager
+        return await receiver.Bot
             .SendTempMessageAsync(receiver.Sender.Id, receiver.Sender.Group.Id, message).ConfigureAwait(false);
     }
 
@@ -176,7 +173,7 @@ public static class MiraiScaffold
     public static async Task RecallAsync(this MessageReceiverBase receiver)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
-        await MessageManager
+        await receiver.Bot
             .RecallAsync(id).ConfigureAwait(false);
     }
 
@@ -187,7 +184,7 @@ public static class MiraiScaffold
     public static async Task RecallAsync(this GroupMessageReceiver receiver)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
-        await MessageManager
+        await receiver.Bot
             .RecallAsync(id, receiver.GroupId).ConfigureAwait(false);
     }
 
@@ -198,7 +195,7 @@ public static class MiraiScaffold
     public static async Task RecallAsync(this FriendMessageReceiver receiver)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
-        await MessageManager
+        await receiver.Bot
             .RecallAsync(id, receiver.FriendId).ConfigureAwait(false);
     }
 
@@ -209,7 +206,7 @@ public static class MiraiScaffold
     public static async Task RecallAsync(this TempMessageReceiver receiver)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
-        await MessageManager
+        await receiver.Bot
             .RecallAsync(id, receiver.Sender.Id).ConfigureAwait(false);
     }
 
@@ -224,7 +221,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteFriendMessageAsync(receiver.Sender.Id, id, chain).ConfigureAwait(false);
     }
 
@@ -239,7 +236,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteGroupMessageAsync(receiver.Sender.Group.Id, id, chain).ConfigureAwait(false);
     }
 
@@ -254,7 +251,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteTempMessageAsync(receiver.Sender.Id, receiver.Sender.Group.Id, id, chain).ConfigureAwait(false);
     }
 
@@ -268,7 +265,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteFriendMessageAsync(receiver.Sender.Id, id, message).ConfigureAwait(false);
     }
 
@@ -282,7 +279,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.ToList().OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteGroupMessageAsync(receiver.Sender.Group.Id, id, message).ConfigureAwait(false);
     }
 
@@ -296,7 +293,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
-        return await MessageManager
+        return await receiver.Bot
             .QuoteTempMessageAsync(receiver.Sender.Id, receiver.Sender.Group.Id, id, message).ConfigureAwait(false);
     }
 
@@ -314,7 +311,7 @@ public static class MiraiScaffold
     public static async Task Handle(this NewFriendRequestedEvent @event,
         NewFriendRequestHandlers handler, string message = "")
     {
-        await RequestManager.HandleNewFriendRequestedAsync(@event, handler, message).ConfigureAwait(false);
+        await @event.Bot.HandleNewFriendRequestedAsync(@event, handler, message).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -323,7 +320,7 @@ public static class MiraiScaffold
     /// <param name="event"></param>
     public static async Task ApproveAsync(this NewFriendRequestedEvent @event)
     {
-        await RequestManager.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.Approve).ConfigureAwait(false);
+        await @event.Bot.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.Approve).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -333,7 +330,7 @@ public static class MiraiScaffold
     /// <param name="message">回复的消息</param>
     public static async Task RejectAsync(this NewFriendRequestedEvent @event, string message = "")
     {
-        await RequestManager.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.Reject, message).ConfigureAwait(false);
+        await @event.Bot.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.Reject, message).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -343,7 +340,7 @@ public static class MiraiScaffold
     /// <param name="message">回复的消息</param>
     public static async Task RejectAndBlockAsync(this NewFriendRequestedEvent @event, string message = "")
     {
-        await RequestManager.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.RejectAndBlock, message).ConfigureAwait(false);
+        await @event.Bot.HandleNewFriendRequestedAsync(@event, NewFriendRequestHandlers.RejectAndBlock, message).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -356,7 +353,7 @@ public static class MiraiScaffold
     public static async Task Handle(this NewMemberRequestedEvent requestedEvent,
         NewMemberRequestHandlers handler, string message = "")
     {
-        await RequestManager
+        await requestedEvent.Bot
             .HandleNewMemberRequestedAsync(requestedEvent, handler, message).ConfigureAwait(false);
     }
     
@@ -366,7 +363,7 @@ public static class MiraiScaffold
     /// <param name="requestedEvent"></param>
     public static async Task ApproveAsync(this NewMemberRequestedEvent requestedEvent)
     {
-        await RequestManager.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Approve).ConfigureAwait(false);
+        await requestedEvent.Bot.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Approve).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -376,7 +373,7 @@ public static class MiraiScaffold
     /// <param name="message">回复消息</param>
     public static async Task RejectAsync(this NewMemberRequestedEvent requestedEvent, string message = "")
     {
-        await RequestManager.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Reject, message).ConfigureAwait(false);
+        await requestedEvent.Bot.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Reject, message).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -385,7 +382,7 @@ public static class MiraiScaffold
     /// <param name="requestedEvent"></param>
     public static async Task DismissAsync(this NewMemberRequestedEvent requestedEvent)
     {
-        await RequestManager.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Dismiss).ConfigureAwait(false);
+        await requestedEvent.Bot.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.Dismiss).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -395,7 +392,7 @@ public static class MiraiScaffold
     /// <param name="message">回复消息</param>
     public static async Task RejectAndBlockAsync(this NewMemberRequestedEvent requestedEvent, string message = "")
     {
-        await RequestManager.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.RejectAndBlock, message).ConfigureAwait(false);
+        await requestedEvent.Bot.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.RejectAndBlock, message).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -404,7 +401,7 @@ public static class MiraiScaffold
     /// <param name="requestedEvent"></param>
     public static async Task DismissAndBlockAsync(this NewMemberRequestedEvent requestedEvent)
     {
-        await RequestManager.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.DismissAndBlock).ConfigureAwait(false);
+        await requestedEvent.Bot.HandleNewMemberRequestedAsync(requestedEvent, NewMemberRequestHandlers.DismissAndBlock).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -417,7 +414,7 @@ public static class MiraiScaffold
     public static async Task Handle(this NewInvitationRequestedEvent requestedEvent,
         NewInvitationRequestHandlers handler, string message)
     {
-        await RequestManager
+        await requestedEvent.Bot
             .HandleNewInvitationRequestedAsync(requestedEvent, handler, message).ConfigureAwait(false);
     }
     
@@ -427,7 +424,7 @@ public static class MiraiScaffold
     /// <param name="requestedEvent"></param>
     public static async Task ApproveAsync(this NewInvitationRequestedEvent requestedEvent)
     {
-        await RequestManager.HandleNewInvitationRequestedAsync(requestedEvent, NewInvitationRequestHandlers.Approve,
+        await requestedEvent.Bot.HandleNewInvitationRequestedAsync(requestedEvent, NewInvitationRequestHandlers.Approve,
             "").ConfigureAwait(false);
     }
 
@@ -437,7 +434,7 @@ public static class MiraiScaffold
     /// <param name="requestedEvent"></param>
     public static async Task RejectAsync(this NewInvitationRequestedEvent requestedEvent)
     {
-        await RequestManager.HandleNewInvitationRequestedAsync(requestedEvent, NewInvitationRequestHandlers.Reject,
+        await requestedEvent.Bot.HandleNewInvitationRequestedAsync(requestedEvent, NewInvitationRequestHandlers.Reject,
             "").ConfigureAwait(false);
     }
 

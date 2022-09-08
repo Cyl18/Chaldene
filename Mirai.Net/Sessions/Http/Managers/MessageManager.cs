@@ -5,23 +5,22 @@ using Manganese.Text;
 using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
-using Mirai.Net.Utils.Internal;
 using Mirai.Net.Utils.Scaffolds;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Mirai.Net.Sessions.Http.Managers;
+namespace Mirai.Net.Sessions;
 
 /// <summary>
 /// 消息管理器
 /// </summary>
-public static class MessageManager
+public partial class MiraiBot
 {
     #region Private helpers
 
-    private static async Task<string> SendMessageAsync(HttpEndpoints endpoints, object payload)
+    private async Task<string> SendMessageAsync(HttpEndpoints endpoints, object payload)
     {
-        var response = await endpoints.PostJsonAsync(payload).ConfigureAwait(false);
+        var response = await PostJsonAsync(endpoints, payload).ConfigureAwait(false);
 
         return response.Fetch("messageId");
     }
@@ -36,9 +35,9 @@ public static class MessageManager
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
-    public static async Task<T> GetMessageReceiverByIdAsync<T>(string messageId) where T : MessageReceiverBase
+    public async Task<T> GetMessageReceiverByIdAsync<T>(string messageId) where T : MessageReceiverBase
     {
-        var response = await HttpEndpoints.MessageFromId.GetAsync(new
+        var response = await GetAsync(HttpEndpoints.MessageFromId, new
         {
             id = messageId
         }).ConfigureAwait(false);
@@ -53,9 +52,9 @@ public static class MessageManager
     /// <param name="messageId">消息id</param>
     /// <param name="target">好友id或群id</param>
     /// <returns></returns>
-    public static async Task<T> GetMessageReceiverAsync<T>(string messageId, string target) where T : MessageReceiverBase
+    public async Task<T> GetMessageReceiverAsync<T>(string messageId, string target) where T : MessageReceiverBase
     {
-        var response = await HttpEndpoints.MessageFromId.GetAsync(new
+        var response = await GetAsync(HttpEndpoints.MessageFromId, new
         {
             id = messageId,
             target
@@ -71,9 +70,9 @@ public static class MessageManager
     /// <param name="timeStart">起始时间, UTC+8 时间戳, 单位为秒. 可以为 0, 即表示从可以获取的最早的消息起. 负数将会被看是 0.</param>
     /// <param name="timeEnd">结束时间, UTC+8 时间戳, 单位为秒. 可以为 <c>long.MaxValue</c>, 即表示到可以获取的最晚的消息为止. 低于 timeStart 的值将会被看作是 timeStart 的值.</param>
     /// <returns></returns>
-    public static async Task<IEnumerable<MessageChain>> GetRoamingMessagesAsync(string target, string timeStart, string timeEnd)
+    public async Task<IEnumerable<MessageChain>> GetRoamingMessagesAsync(string target, string timeStart, string timeEnd)
     {
-        var response = await HttpEndpoints.RoamingMessages.GetAsync(new
+        var response = await GetAsync(HttpEndpoints.RoamingMessages, new
         {
             timeStart,
             timeEnd,
@@ -89,7 +88,7 @@ public static class MessageManager
     /// <param name="target"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendFriendMessageAsync(string target, MessageChain chain)
+    public async Task<string> SendFriendMessageAsync(string target, MessageChain chain)
     {
         var payload = new
         {
@@ -106,7 +105,7 @@ public static class MessageManager
     /// <param name="friend"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendFriendMessageAsync(this Friend friend, MessageChain chain)
+    public async Task<string> SendFriendMessageAsync(Friend friend, MessageChain chain)
     {
         return await SendFriendMessageAsync(friend.Id, chain).ConfigureAwait(false);
     }
@@ -117,7 +116,7 @@ public static class MessageManager
     /// <param name="target"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendGroupMessageAsync(string target, MessageChain chain)
+    public async Task<string> SendGroupMessageAsync(string target, MessageChain chain)
     {
         var payload = new
         {
@@ -134,7 +133,7 @@ public static class MessageManager
     /// <param name="group"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendGroupMessageAsync(this Group group, MessageChain chain)
+    public async Task<string> SendGroupMessageAsync(Group group, MessageChain chain)
     {
         return await SendGroupMessageAsync(group.Id, chain).ConfigureAwait(false);
     }
@@ -146,7 +145,7 @@ public static class MessageManager
     /// <param name="group"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendTempMessageAsync(string qq, string group, MessageChain chain)
+    public async Task<string> SendTempMessageAsync(string qq, string group, MessageChain chain)
     {
         var payload = new
         {
@@ -164,7 +163,7 @@ public static class MessageManager
     /// <param name="member"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> SendTempMessageAsync(this Member member, MessageChain chain)
+    public async Task<string> SendTempMessageAsync(Member member, MessageChain chain)
     {
         return await SendTempMessageAsync(member.Id, member.Group.Id, chain).ConfigureAwait(false);
     }
@@ -175,7 +174,7 @@ public static class MessageManager
     /// <param name="target">戳一戳的目标</param>
     /// <param name="subject">在什么地方戳</param>
     /// <param name="kind">只可以选Friend, Strange和Group</param>
-    public static async Task SendNudgeAsync(string target, string subject, MessageReceivers kind)
+    public async Task SendNudgeAsync(string target, string subject, MessageReceivers kind)
     {
         var payload = new
         {
@@ -184,7 +183,7 @@ public static class MessageManager
             kind = kind.ToString()
         };
 
-        await HttpEndpoints.SendNudge.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.SendNudge, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -192,14 +191,14 @@ public static class MessageManager
     /// </summary>
     /// <param name="messageId">消息id</param>
     [Obsolete("此方法在mirai-api-http 2.6.0及以上版本会导致异常")]
-    public static async Task RecallAsync(string messageId)
+    public async Task RecallAsync(string messageId)
     {
         var payload = new
         {
             target = messageId
         };
 
-        await HttpEndpoints.Recall.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Recall, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -207,7 +206,7 @@ public static class MessageManager
     /// </summary>
     /// <param name="messageId">消息id</param>
     /// <param name="target">好友id或群id</param>
-    public static async Task RecallAsync(string messageId, string target)
+    public async Task RecallAsync(string messageId, string target)
     {
         var payload = new
         {
@@ -215,7 +214,7 @@ public static class MessageManager
             messageId
         };
 
-        await HttpEndpoints.Recall.PostJsonAsync(payload).ConfigureAwait(false);
+        await PostJsonAsync(HttpEndpoints.Recall, payload).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -225,7 +224,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteFriendMessageAsync(string target, string messageId,
+    public async Task<string> QuoteFriendMessageAsync(string target, string messageId,
         MessageChain chain)
     {
         var payload = new
@@ -245,7 +244,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteFriendMessageAsync(this Friend friend, string messageId,
+    public async Task<string> QuoteFriendMessageAsync(Friend friend, string messageId,
         MessageChain chain)
     {
         return await QuoteFriendMessageAsync(friend.Id, messageId, chain).ConfigureAwait(false);
@@ -258,7 +257,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteGroupMessageAsync(string target, string messageId, MessageChain chain)
+    public async Task<string> QuoteGroupMessageAsync(string target, string messageId, MessageChain chain)
     {
         var payload = new
         {
@@ -277,7 +276,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteGroupMessageAsync(this Group group, string messageId,
+    public async Task<string> QuoteGroupMessageAsync(Group group, string messageId,
         MessageChain chain)
     {
         return await QuoteGroupMessageAsync(group.Id, messageId, chain).ConfigureAwait(false);
@@ -291,7 +290,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
+    public async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
         MessageChain chain)
     {
         var payload = new
@@ -312,7 +311,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="chain"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteTempMessageAsync(this Member member, string messageId,
+    public async Task<string> QuoteTempMessageAsync(Member member, string messageId,
         MessageChain chain)
     {
         return await QuoteTempMessageAsync(member.Group.Id, member.Group.Id, messageId, chain).ConfigureAwait(false);
@@ -328,7 +327,7 @@ public static class MessageManager
     /// <param name="target"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendFriendMessageAsync(string target, string message)
+    public async Task<string> SendFriendMessageAsync(string target, string message)
     {
         return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -339,7 +338,7 @@ public static class MessageManager
     /// <param name="target"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendFriendMessageAsync(this Friend target, string message)
+    public async Task<string> SendFriendMessageAsync(Friend target, string message)
     {
         return await SendFriendMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -352,7 +351,7 @@ public static class MessageManager
     /// <param name="group"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendTempMessageAsync(string target, string group, string message)
+    public async Task<string> SendTempMessageAsync(string target, string group, string message)
     {
         return await SendTempMessageAsync(target, group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -363,7 +362,7 @@ public static class MessageManager
     /// <param name="member"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendTempMessageAsync(this Member member, string message)
+    public async Task<string> SendTempMessageAsync(Member member, string message)
     {
         return await SendTempMessageAsync(member, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -374,7 +373,7 @@ public static class MessageManager
     /// <param name="target"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendGroupMessageAsync(string target, string message)
+    public async Task<string> SendGroupMessageAsync(string target, string message)
     {
         return await SendGroupMessageAsync(target, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -385,7 +384,7 @@ public static class MessageManager
     /// <param name="group"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendGroupMessageAsync(this Group group, string message)
+    public async Task<string> SendGroupMessageAsync(Group group, string message)
     {
         return await SendGroupMessageAsync(group, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -397,7 +396,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteFriendMessageAsync(string target, string messageId, string message)
+    public async Task<string> QuoteFriendMessageAsync(string target, string messageId, string message)
     {
         return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -409,7 +408,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteFriendMessageAsync(this Friend target, string messageId, string message)
+    public async Task<string> QuoteFriendMessageAsync(Friend target, string messageId, string message)
     {
         return await QuoteFriendMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -421,7 +420,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteGroupMessageAsync(string target, string messageId, string message)
+    public async Task<string> QuoteGroupMessageAsync(string target, string messageId, string message)
     {
         return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -433,7 +432,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteGroupMessageAsync(this Group target, string messageId, string message)
+    public async Task<string> QuoteGroupMessageAsync(Group target, string messageId, string message)
     {
         return await QuoteGroupMessageAsync(target, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }
@@ -446,7 +445,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
+    public async Task<string> QuoteTempMessageAsync(string memberId, string group, string messageId,
         string message)
     {
         return await QuoteTempMessageAsync(memberId, group, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
@@ -459,7 +458,7 @@ public static class MessageManager
     /// <param name="messageId"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteTempMessageAsync(this Member member, string messageId, string message)
+    public async Task<string> QuoteTempMessageAsync(Member member, string messageId, string message)
     {
         return await QuoteTempMessageAsync(member, messageId, new MessageChainBuilder().Plain(message).Build()).ConfigureAwait(false);
     }

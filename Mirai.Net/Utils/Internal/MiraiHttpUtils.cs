@@ -4,11 +4,11 @@ using Flurl.Http;
 using Manganese.Text;
 using Mirai.Net.Data.Exceptions;
 using Mirai.Net.Data.Sessions;
-using Mirai.Net.Sessions;
+using Mirai.Net.Utils.Internal;
 
-namespace Mirai.Net.Utils.Internal;
+namespace Mirai.Net.Sessions;
 
-internal static class MiraiHttpUtils
+public partial class MiraiBot
 {
     #region Guarantee
 
@@ -17,7 +17,7 @@ internal static class MiraiHttpUtils
     /// </summary>
     /// <param name="json"></param>
     /// <param name="appendix"></param>
-    internal static void EnsureSuccess(this string json, string appendix = null)
+    internal void EnsureSuccess(string json, string appendix = null)
     {
         var obj = json.ToJObject();
 
@@ -30,9 +30,9 @@ internal static class MiraiHttpUtils
 
                 if (!appendix.IsNullOrEmpty())
                     message += $"\r\n备注: {appendix}";
-                else
-                    message += $"\r\n备注: {MiraiBot.Instance.ToJsonString()}";
-
+                // else
+                //    message += $"\r\n备注: {MiraiBot.Instance.ToJsonString()}";
+                // ?????
                 throw new InvalidResponseException(message);
             }
         }
@@ -47,24 +47,24 @@ internal static class MiraiHttpUtils
     /// <param name="url"></param>
     /// <param name="withSessionKey">是否添加session头</param>
     /// <returns></returns>
-    internal static async Task<string> GetAsync(string url, bool withSessionKey = true)
+    internal async Task<string> GetAsync(string url, bool withSessionKey = true)
     {
         var result = withSessionKey
             ? await url
-                .WithHeader("Authorization", $"session {MiraiBot.Instance.HttpSessionKey}")
+                .WithHeader("Authorization", $"session {HttpSessionKey}")
                 .GetAsync().ConfigureAwait(false)
             : await url.GetAsync().ConfigureAwait(false);
 
         var re = await result.GetStringAsync().ConfigureAwait(false);
-        re.EnsureSuccess($"url={url}");
+        EnsureSuccess(re, $"url={url}");
 
         return re;
     }
 
-    internal static async Task<string> GetAsync(this HttpEndpoints endpoints, object extra = null,
+    internal async Task<string> GetAsync(HttpEndpoints endpoints, object extra = null,
         bool withSessionKey = true)
     {
-        var url = $"http://{MiraiBot.Instance.Address.HttpAddress}/{endpoints.GetDescription()}";
+        var url = $"http://{Address.HttpAddress}/{endpoints.GetDescription()}";
 
         if (extra != null)
             url = url.SetQueryParams(extra);
@@ -79,16 +79,16 @@ internal static class MiraiHttpUtils
     /// <param name="withSessionKey">加入Authentication: session xxx 请求头</param>
     /// <exception cref="InvalidResponseException"></exception>
     /// <returns></returns>
-    internal static async Task<string> PostJsonAsync(string url, object json, bool withSessionKey = true)
+    internal async Task<string> PostJsonAsync(string url, object json, bool withSessionKey = true)
     {
         var result = withSessionKey
             ? await url
-                .WithHeader("Authorization", $"session {MiraiBot.Instance.HttpSessionKey}")
+                .WithHeader("Authorization", $"session {HttpSessionKey}")
                 .PostJsonAsync(json).ConfigureAwait(false)
             : await url.PostJsonAsync(json).ConfigureAwait(false);
 
         var re = await result.GetStringAsync().ConfigureAwait(false);
-        re.EnsureSuccess($"url={url}\r\npayload={json.ToJsonString()}");
+        EnsureSuccess(re, $"url={url}\r\npayload={json.ToJsonString()}");
 
         return re;
     }
@@ -100,10 +100,10 @@ internal static class MiraiHttpUtils
     /// <param name="withSessionKey">加入Authentication: session xxx 请求头</param>
     /// <exception cref="InvalidResponseException"></exception>
     /// <returns></returns>
-    internal static async Task<string> PostJsonAsync(this HttpEndpoints endpoint, object json,
+    internal async Task<string> PostJsonAsync(HttpEndpoints endpoint, object json,
         bool withSessionKey = true)
     {
-        var url = $"http://{MiraiBot.Instance.Address.HttpAddress}/{endpoint.GetDescription()}";
+        var url = $"http://{Address.HttpAddress}/{endpoint.GetDescription()}";
         var result = await PostJsonAsync(url, json, withSessionKey).ConfigureAwait(false);
 
         return result;

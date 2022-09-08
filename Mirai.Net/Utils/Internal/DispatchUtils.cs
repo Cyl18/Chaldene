@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Mirai.Net.Utils.Internal;
 

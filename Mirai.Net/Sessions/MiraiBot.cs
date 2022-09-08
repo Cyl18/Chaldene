@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Reactive.Linq;
@@ -14,8 +13,6 @@ using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Sessions;
-using Mirai.Net.Data.Shared;
-using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Internal;
 using Mirai.Net.Utils.Scaffolds;
 using Newtonsoft.Json;
@@ -26,7 +23,7 @@ namespace Mirai.Net.Sessions;
 /// <summary>
 ///     mirai-api-http机器人描述
 /// </summary>
-public class MiraiBot : IDisposable
+public partial class MiraiBot : IDisposable
 {
     /// <summary>
     /// 销毁当前对象
@@ -44,7 +41,7 @@ public class MiraiBot : IDisposable
     /// </summary>
     public async Task LaunchAsync()
     {
-        Instance = this;
+        //Instance = this;
 
 
         await VerifyAsync().ConfigureAwait(false);
@@ -56,11 +53,11 @@ public class MiraiBot : IDisposable
 
     #region Properties
 
-    /// <summary>
-    ///     最后一个启动的MiraiBot实例
-    /// </summary>
-    [JsonIgnore]
-    public static MiraiBot Instance { get; set; }
+    // /// <summary>
+    // ///     最后一个启动的MiraiBot实例
+    // /// </summary>
+    // [JsonIgnore]
+    // public static MiraiBot Instance { get; set; }
 
     [JsonIgnore]
     internal string HttpSessionKey { get; set; }
@@ -90,20 +87,6 @@ public class MiraiBot : IDisposable
     /// </summary>
     public string VerifyKey { get; set; }
     
-    /// <summary>
-    /// 群列表
-    /// </summary>
-    [JsonIgnore]
-    public Lazy<IEnumerable<Group>> Groups => 
-        new(() => AccountManager.GetGroupsAsync().GetAwaiter().GetResult());
-    
-    /// <summary>
-    /// 好友列表
-    /// </summary>
-    [JsonIgnore]
-    public Lazy<IEnumerable<Friend>> Friends => 
-        new(() => AccountManager.GetFriendsAsync().GetAwaiter().GetResult());
-
     #endregion
 
     #region Handlers
@@ -147,7 +130,7 @@ public class MiraiBot : IDisposable
     /// <returns></returns>
     private async Task VerifyAsync()
     {
-        var result = await HttpEndpoints.Verify.PostJsonAsync(new
+        var result = await PostJsonAsync(HttpEndpoints.Verify, new
         {
             verifyKey = VerifyKey
         }, false).ConfigureAwait(false);
@@ -160,7 +143,7 @@ public class MiraiBot : IDisposable
     /// </summary>
     private async Task BindAsync()
     {
-        _ = await HttpEndpoints.Bind.PostJsonAsync(new
+        _ = await PostJsonAsync(HttpEndpoints.Bind, new
         {
             sessionKey = HttpSessionKey,
             qq = QQ
@@ -172,7 +155,7 @@ public class MiraiBot : IDisposable
     /// </summary>
     private async Task ReleaseAsync()
     {
-        _ = await HttpEndpoints.Release.PostJsonAsync(new
+        _ = await PostJsonAsync(HttpEndpoints.Release, new
         {
             sessionKey = HttpSessionKey,
             qq = QQ
@@ -227,7 +210,7 @@ public class MiraiBot : IDisposable
 
         if (dataType.Contains("Message"))
         {
-            var receiver = ReflectionUtils.GetMessageReceiverBase(data);
+            var receiver = ReflectionUtils.GetMessageReceiverBase(data, this);
 
             var rawChain = data.Fetch("messageChain");
             if (rawChain == null || rawChain.IsNullOrEmpty())
@@ -240,7 +223,7 @@ public class MiraiBot : IDisposable
                 .Select(token => ReflectionUtils.GetMessageBase(token.ToString()))
                 .ToMessageChain();
             
-            if (receiver.MessageChain.OfType<AtMessage>().Any(x => x.Target == Instance.QQ))
+            if (receiver.MessageChain.OfType<AtMessage>().Any(x => x.Target == QQ))
             {
                 _eventReceivedSubject.OnNext(new AtEvent
                 {
@@ -252,7 +235,7 @@ public class MiraiBot : IDisposable
         }
         else if (dataType.Contains("Event"))
         {
-            _eventReceivedSubject.OnNext(ReflectionUtils.GetEventBase(data));
+            _eventReceivedSubject.OnNext(ReflectionUtils.GetEventBase(data, this));
         }
         else
         {

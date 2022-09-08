@@ -4,29 +4,28 @@ using System.Threading.Tasks;
 using Manganese.Text;
 using Mirai.Net.Data.Sessions;
 using Mirai.Net.Data.Shared;
-using Mirai.Net.Utils.Internal;
 using Newtonsoft.Json;
 
-namespace Mirai.Net.Sessions.Http.Managers;
+namespace Mirai.Net.Sessions;
 
 /// <summary>
 ///     账号管理器
 /// </summary>
-public static class AccountManager
+public partial class MiraiBot
 {
     #region Private helpers
 
-    private static async Task<IEnumerable<T>> GetCollectionAsync<T>(HttpEndpoints endpoints, object extra = null)
+    private async Task<IEnumerable<T>> GetCollectionAsync<T>(HttpEndpoints endpoints, object extra = null)
     {
-        var raw = await endpoints.GetAsync(extra).ConfigureAwait(false);
+        var raw = await GetAsync(endpoints, extra).ConfigureAwait(false);
         raw = raw.Fetch("data");
 
         return raw.ToJArray().Select(x => x.ToObject<T>());
     }
 
-    private static async Task<Profile> GetProfileAsync(HttpEndpoints endpoints, object extra = null)
+    private async Task<Profile> GetProfileAsync(HttpEndpoints endpoints, object extra = null)
     {
-        var raw = await endpoints.GetAsync(extra).ConfigureAwait(false);
+        var raw = await GetAsync(endpoints, extra).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<Profile>(raw);
     }
@@ -38,7 +37,7 @@ public static class AccountManager
     /// <summary>
     ///     获取bot账号的好友列表
     /// </summary>
-    public static async Task<IEnumerable<Friend>> GetFriendsAsync()
+    public async Task<IEnumerable<Friend>> GetFriendsAsync()
     {
         return await GetCollectionAsync<Friend>(HttpEndpoints.FriendList).ConfigureAwait(false);
     }
@@ -46,7 +45,7 @@ public static class AccountManager
     /// <summary>
     ///     获取bot账号的QQ群列表
     /// </summary>
-    public static async Task<IEnumerable<Group>> GetGroupsAsync()
+    public async Task<IEnumerable<Group>> GetGroupsAsync()
     {
         return await GetCollectionAsync<Group>(HttpEndpoints.GroupList).ConfigureAwait(false);
     }
@@ -54,7 +53,7 @@ public static class AccountManager
     /// <summary>
     ///     获取某群的全部群成员
     /// </summary>
-    public static async Task<IEnumerable<Member>> GetGroupMembersAsync(string target)
+    public async Task<IEnumerable<Member>> GetGroupMembersAsync(string target)
     {
         return await GetCollectionAsync<Member>(HttpEndpoints.MemberList, new
         {
@@ -65,7 +64,7 @@ public static class AccountManager
     /// <summary>
     ///     获取某群的全部群成员
     /// </summary>
-    public static async Task<IEnumerable<Member>> GetGroupMembersAsync(this Group target)
+    public async Task<IEnumerable<Member>> GetGroupMembersAsync(Group target)
     {
         return await GetGroupMembersAsync(target.Id).ConfigureAwait(false);
     }
@@ -74,9 +73,9 @@ public static class AccountManager
     ///     删除好友
     /// </summary>
     /// <param name="target"></param>
-    public static async Task DeleteFriendAsync(string target)
+    public async Task DeleteFriendAsync(string target)
     {
-        _ = await HttpEndpoints.DeleteFriend.PostJsonAsync(new
+        _ = await PostJsonAsync(HttpEndpoints.DeleteFriend, new
         {
             target
         }).ConfigureAwait(false);
@@ -86,7 +85,7 @@ public static class AccountManager
     ///     删除好友
     /// </summary>
     /// <param name="friend"></param>
-    public static async Task DeleteFriendAsync(this Friend friend)
+    public async Task DeleteFriendAsync(Friend friend)
     {
         await DeleteFriendAsync(friend.Id).ConfigureAwait(false);
     }
@@ -94,7 +93,7 @@ public static class AccountManager
     /// <summary>
     ///     获取bot资料
     /// </summary>
-    public static async Task<Profile> GetBotProfileAsync()
+    public async Task<Profile> GetBotProfileAsync()
     {
         return await GetProfileAsync(HttpEndpoints.BotProfile).ConfigureAwait(false);
     }
@@ -102,7 +101,7 @@ public static class AccountManager
     /// <summary>
     ///     获取好友资料
     /// </summary>
-    public static async Task<Profile> GetFriendProfileAsync(string target)
+    public async Task<Profile> GetFriendProfileAsync(string target)
     {
         return await GetProfileAsync(HttpEndpoints.FriendProfile, new
         {
@@ -113,7 +112,7 @@ public static class AccountManager
     /// <summary>
     ///     获取好友资料
     /// </summary>
-    public static async Task<Profile> GetFriendProfileAsync(this Friend target)
+    public async Task<Profile> GetFriendProfileAsync(Friend target)
     {
         return await GetFriendProfileAsync(target.Id).ConfigureAwait(false);
     }
@@ -123,7 +122,7 @@ public static class AccountManager
     /// </summary>
     /// <param name="id"></param>
     /// <param name="target">群号</param>
-    public static async Task<Profile> GetMemberProfileAsync(string id, string target)
+    public async Task<Profile> GetMemberProfileAsync(string id, string target)
     {
         return await GetProfileAsync(HttpEndpoints.MemberProfile, new
         {
@@ -135,7 +134,7 @@ public static class AccountManager
     /// <summary>
     ///     获取群员资料
     /// </summary>
-    public static async Task<Profile> GetMemberProfileAsync(this Member member)
+    public async Task<Profile> GetMemberProfileAsync(Member member)
     {
         return await GetMemberProfileAsync(member.Id, member.Group.Id).ConfigureAwait(false);
     }
@@ -143,7 +142,7 @@ public static class AccountManager
     /// <summary>
     ///     获取任意QQ的资料（需要mirai-api-http 2.4.0及以上）
     /// </summary>
-    public static async Task<Profile> GetProfileAsync(string target)
+    public async Task<Profile> GetProfileAsync(string target)
     {
         return await GetProfileAsync(HttpEndpoints.UserProfile, new
         {

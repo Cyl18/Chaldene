@@ -8,6 +8,7 @@ using Mirai.Net.Data.Events.Concretes;
 using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions;
 using Newtonsoft.Json;
 
 namespace Mirai.Net.Utils.Internal;
@@ -116,7 +117,7 @@ internal static class ReflectionUtils
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    internal static MessageReceiverBase GetMessageReceiverBase(string data)
+    internal static MessageReceiverBase GetMessageReceiverBase(string data, MiraiBot bot)
     {
         try
         {
@@ -124,8 +125,10 @@ internal static class ReflectionUtils
 
             var type = MessageReceiverBases.First(receiver => receiver.Type == raw!.Type)
                 .GetType();
+            var obj = JsonConvert.DeserializeObject(data, type) as MessageReceiverBase;
+            obj.Bot = bot;
 
-            return JsonConvert.DeserializeObject(data, type) as MessageReceiverBase;
+            return obj;
         }
         catch
         {
@@ -140,15 +143,16 @@ internal static class ReflectionUtils
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    internal static EventBase GetEventBase(string data)
+    internal static EventBase GetEventBase(string data, MiraiBot bot)
     {
         try
         {
             var raw = JsonConvert.DeserializeObject<EventBase>(data);
-
-            return JsonConvert.DeserializeObject(data,
+            var obj = JsonConvert.DeserializeObject(data,
                 EventBases.First(message => message.Type == raw!.Type)
                     .GetType()) as EventBase;
+            obj.Bot = bot;
+            return obj;
         }
         catch
         {

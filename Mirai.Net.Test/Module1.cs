@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using Mirai.Net.Data.Messages;
-using Mirai.Net.Data.Messages.Concretes;
+﻿using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Modules;
 using Mirai.Net.Utils.Scaffolds;
