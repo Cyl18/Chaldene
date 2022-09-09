@@ -1,16 +1,61 @@
-# Chaldene 2.4.5
+# Chaldene
 
-Chaldene 是基于 [mirai-api-http] 实现的 C# 版轻量级 [mirai] 社区 SDK。
+Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化重构版 fork (正在获取作者授权), 原作者[SinoAHpx](https://github.com/SinoAHpx), 是基于 [mirai-api-http] 实现的 C# 版超轻量级 [mirai] 社区 SDK。
 
 此项目遵循 [AGPL-3.0](https://github.com/AHpxChina/Chaldene/blob/master/LICENSE) 协议开源。
 
-本项目**新建立的** QQ 群: [752379554](https://jq.qq.com/?_wv=1027&k=gdWqppEO)（原来的已被停封）欢迎加入群聊探讨 ~~甚至水群聊天~~
+## Simple as it is.
+![1](docs/images/simple.gif)
 
-项目文档：[Chaldene Documents](https://sinoahpx.github.io/Chaldene.Documents)
+有的时候, 你需要实现一些特别简单的功能, 想迅速写出一个机器人.
 
-如果你觉得这是个很酷的项目的话，不妨考虑给它点一个 Star。
+```shell
+> Install-Package Chaldene
+```
 
-如果你还觉得挺酷但还不够好的话，也欢迎提交 Pull Request 和 Issue。
+```csharp
+var bot = new MiraiBot("localhost:5000", "*******", 780712);
+await bot.LaunchAsync();
+
+bot.GroupMessageReceived += async (sender, args) =>
+{
+    Console.WriteLine($"接收到消息: {args.MessageChain.GetPlainMessage()}");
+};
+
+await bot.SendFriendMessageAsync(233656, "橘子!");
+```
+
+好了, 你学会使用 Chaldene 了.
+
+## 对比
+
+|  | Chaldene | Cocoa  | Mirai.Net | Hyperai | Mirai-Sharp |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| .NET 版本 | .NET Standard 2.0 | .NET 5 | .NET Standard 2.0 | .NET 5 | .NET Standard 2.0 |
+| 支持多个 Bot | ✅ | ⛔ | ⛔ | ✅ |✅|
+| 支持 https | ✅ |⛔|⛔|⛔|⛔|
+| 使用 ConfigureAwait(false) | ✅ | ⛔|⛔|⛔|🟡(部分)|
+| 复杂的 MVC/DSL | ⛔ | ✅ | ⛔ | ✅ | ✅ |
+| Native 依赖 |⛔|⛔|⛔|⛔|✅
+| 不会卖萌 |⛔ |✅|✅|✅| ✅|
+| 文档完善度(主观) | 你猜 | 低 | 中高 | 看不懂 | 很高但是看不懂 |
+| 写出 HelloWorld 所需行数[1] | 10 | ⛔[2] | 10 | 14 | 32 |
+| 学习成本 | **极低** | 中高 | 低 | 极高 | 高 |
+
+[1] 指发一条消息和自动回复消息的有效代码行数, 可能不客观, 详细参见牢骚  
+[2] 我找不到主动发消息的方法
+
+想看我发牢骚的话, [牢骚](docs/complicate.md)有详细对比.
+
+## 那为什么要写这个库? 和 Mirai.Net 的区别在哪?
+
+[牢骚](docs/complicate.md)
+
+## 感谢
+
+感谢 [原作者 SinoAHpx](https://github.com/SinoAHpx) 创造了这个 Mirai.Net。
+
+<details> <summary>原项目文档内容</summary>
 
 ## 速览
 
@@ -23,9 +68,9 @@ Chaldene 是基于 [mirai-api-http] 实现的 C# 版轻量级 [mirai] 社区 SDK
 - 有一堆好用的脚手架和拓展方法。
 - 提供了简单的模块化和命令系统实现。
 - 源代码结构
-  - Chaldene，主项目
-  - Chaldene.Test，控制台测试项目
-  - Chaldene.UnitTest，单元测试项目（现在没啥用了）
+  - Mirai.Net，主项目
+  - Mirai.Net.Test，控制台测试项目
+  - Mirai.Net.UnitTest，单元测试项目（现在没啥用了）
 
 <details>
   <summary>实现的接口列表</summary>
@@ -112,9 +157,9 @@ _斜体的标注的接口是不稳定的_
 ### 安装
 
 - 使用 Nuget 安装(推荐)
-  - Nuget 包管理器: `Install-Package Chaldene`
-  - .NET CLI: `dotnet add package Chaldene`
-  - **或者在 IDE 的可视化界面搜索`Chaldene`安装最新版。**
+  - Nuget 包管理器: `Install-Package Mirai.Net`
+  - .NET CLI: `dotnet add package Mirai.Net`
+  - **或者在 IDE 的可视化界面搜索`Mirai.Net`安装最新版。**
 - 自己克隆这个仓库的默认分支，然后自己编译，然后自己添加 dll 引用。
 
 ### 创建和启动 Bot
@@ -128,9 +173,9 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Chaldene.Data.Messages;
-using Chaldene.Data.Messages.Receivers;
-using Chaldene.Sessions;
+using Mirai.Net.Data.Messages;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions;
 ```
 
 </details>
@@ -173,7 +218,7 @@ bot.EventReceived
 
 ### Hello, World
 
-`Chaldene`通过一系列的`xxManager`(**这些管理器都是静态类。**)来进行主动操作，其中，消息相关的管理器为`MessageManager`。
+`Mirai.Net`通过一系列的`xxManager`(**这些管理器都是静态类。**)来进行主动操作，其中，消息相关的管理器为`MessageManager`。
 
 #### 发送消息
 
@@ -193,9 +238,9 @@ await MessageManager.SendGroupMessageAsync("xx", new MessageChainBuilder().Plain
 
 ## 贡献
 
-此项目欢迎任何人的 [Pull Request](https://github.com/AHpxChina/Chaldene/pulls) 和 [Issue](https://github.com/AHpxChina/Chaldene/issues) 也欢迎 Star 和 Fork。
+此项目欢迎任何人的 [Pull Request](https://github.com/AHpxChina/Mirai.Net/pulls) 和 [Issue](https://github.com/AHpxChina/Mirai.Net/issues) 也欢迎 Star 和 Fork。
 
-如果你认为文档不够好，也欢迎对 [文档仓库](https://github.com/SinoAHpx/Chaldene.Documents) 提交 [Pull Request](https://github.com/AHpxChina/Chaldene.Documents/pulls) 和 [Issue](https://github.com/AHpxChina/Chaldene.Documents/issues)。
+如果你认为文档不够好，也欢迎对 [文档仓库](https://github.com/SinoAHpx/Mirai.Net.Documents) 提交 [Pull Request](https://github.com/AHpxChina/Mirai.Net.Documents/pulls) 和 [Issue](https://github.com/AHpxChina/Mirai.Net.Documents/issues)。
 
 ## 致谢
 
@@ -208,6 +253,9 @@ await MessageManager.SendGroupMessageAsync("xx", new MessageChainBuilder().Plain
 - [Rx.NET](https://github.com/dotnet/reactive)
 - [Manganese](https://github.com/SinoAHpx/Manganese)
 
+</details>
+
+
 [mirai-api-http]: https://github.com/project-mirai/mirai-api-http
 [mirai]: https://github.com/mamoe/mirai
-[文档]: https://sinoahpx.github.io/Chaldene.Documents/
+[文档]: https://sinoahpx.github.io/Mirai.Net.Documents/
