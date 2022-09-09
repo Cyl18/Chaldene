@@ -54,7 +54,7 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 
 ---
 
-闲聊群 [872861305](https://jq.qq.com/?_wv=1027&k=ayjTN7xW)
+闲聊群建议加 Mirai.Net 的
 
 ## 感谢
 
