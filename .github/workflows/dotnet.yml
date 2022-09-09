@@ -30,7 +30,7 @@ jobs:
         echo "time is $currtime"
 
         # Enter project directory
-        cd Mirai.Net
+        cd Chaldene
 
         # Build package
         dotnet restore

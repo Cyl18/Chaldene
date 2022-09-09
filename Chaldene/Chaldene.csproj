@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Chaldene</Title>
+        <Description>基于mirai-api-http的轻量级mirai社区sdk</Description>
+        <Copyright>Copyright 2022 AHpx and Cyl18 reserve all rights.</Copyright>
+        <PackageProjectUrl>https://github.com/Cyl18/Chaldene</PackageProjectUrl>
+        <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/Cyl18/Chaldene</RepositoryUrl>
+        <PackageTags>Mirai, QQBot, mirai-api-http</PackageTags>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\Chaldene.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\Chaldene.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Flurl" Version="3.0.6" />
+        <PackageReference Include="Flurl.Http" Version="3.2.4" />
+        <PackageReference Include="Manganese" Version="1.2.2" />
+        <PackageReference Include="Websocket.Client" Version="4.4.43" />
+
+        <!--AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Chaldene.UnitTest</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>$(MSBuildProjectName).Test</_Parameter1>
+        </AssemblyAttribute-->
+    </ItemGroup>
+
+</Project>

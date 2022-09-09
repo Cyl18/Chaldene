@@ -1,0 +1,20 @@
+﻿using Chaldene.Data.Shared;
+using Newtonsoft.Json;
+
+namespace Chaldene.Data.Events.Concretes.Group;
+
+/// <summary>
+/// 新成员入群
+/// </summary>
+public record MemberJoinedEvent : EventBase
+{
+    /// <summary>
+    /// 事件类型
+    /// </summary>
+    public override Events Type { get; set; } = Events.MemberJoined;
+
+    /// <summary>
+    /// 当事人
+    /// </summary>
+    [JsonProperty("member")] public Member Member { get; set; }
+}
