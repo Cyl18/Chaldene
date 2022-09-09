@@ -4,6 +4,8 @@ Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化�
 
 此项目遵循 [AGPL-3.0](https://github.com/AHpxChina/Chaldene/blob/master/LICENSE) 协议开源。
 
+闲聊群
+
 ## Simple as it is.
 
 ![1](docs/images/simple.gif)
@@ -54,7 +56,7 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 
 ## 感谢
 
-感谢 [原作者 SinoAHpx](https://github.com/SinoAHpx) 创造了这个 Mirai.Net。
+感谢 [原作者 SinoAHpx](https://github.com/SinoAHpx) 创造了 Mirai.Net。
 
 <details> <summary>原项目文档内容</summary>
 
