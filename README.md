@@ -1,6 +1,6 @@
 # Chaldene
 
-Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化重构版 fork (正在获取作者授权), 原作者[SinoAHpx](https://github.com/SinoAHpx), 是基于 [mirai-api-http] 实现的 C# 版超轻量级 [mirai] 社区 SDK。
+Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化重构版 fork ([已经取得作者授权](docs/images/授权.png)), 原作者[SinoAHpx](https://github.com/SinoAHpx), 是基于 [mirai-api-http] 实现的 C# 版超轻量级 [mirai] 社区 SDK。
 
 此项目遵循 [AGPL-3.0](https://github.com/AHpxChina/Chaldene/blob/master/LICENSE) 协议开源。
 
