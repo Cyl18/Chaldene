@@ -3,7 +3,7 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.2.0</PackageVersion>
         <Title>Chaldene</Title>
         <Description>基于mirai-api-http的超轻量级mirai社区sdk</Description>
         <Copyright>Copyright 2022 AHpx and Cyl18 reserve all rights.</Copyright>

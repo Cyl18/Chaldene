@@ -2,7 +2,7 @@
 
 Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化重构版 fork ([已经取得作者授权](docs/images/授权.png)), 原作者 [SinoAHpx](https://github.com/SinoAHpx), 是基于 [mirai-api-http] 实现的 C# 版超轻量级 [mirai] 社区 SDK.
 
-此项目遵循 [AGPL-3.0](https://github.com/AHpxChina/Chaldene/blob/master/LICENSE) 协议开源.
+此项目遵循 [AGPL-3.0](https://github.com/Cyl18/Chaldene/blob/master/LICENSE) 协议开源.
 
 ## Simple as it is.
 
@@ -26,7 +26,7 @@ bot.GroupMessageReceived += async (sender, args) =>
 await bot.SendFriendMessageAsync(233656, "橘子!");
 ```
 
-好了, 你学会使用 Chaldene 了.
+好了, 你学会使用 Chaldene 了♥.
 
 ## 对比
 
@@ -46,11 +46,11 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 [1] 指发一条消息和自动回复消息的有效代码(不含大括号和空格)行数, 可能不客观, 详细参见牢骚  
 [2] 我找不到主动发消息的方法
 
-想看我发牢骚的话, [牢骚](docs/complicate.md)有详细对比.
+想看我发牢骚的话, [牢骚](docs/complicate.md)中有详细对比.
 
 ## 和 Mirai.Net 的区别在哪?
 
-Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 定期拉取上游更新, 相比 Mirai.Net 的主要区别和改动有:
+Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 原作者比较忙. Chaldene 定期会拉取上游更新, 相比 Mirai.Net 的主要区别和改动有:
 
 - 为 SendMessage 加入了 params MessageBase[], 简化消息发送
 - 将 EventReceived 和 MessageReceived 整合到 MiraiBot 中显式声明
@@ -60,7 +60,9 @@ Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 定期拉取上游更新, 相�
 - 使用了 .ConfigureAwait(false)
 - 支持多机器人实例
 - 支持 HTTPS (`MiraiBot.UseHttps = true`)
+- 加入 `MiraiBot.Connected`/`MiraiBot.UseAutoReconnect()`
 - 部分 API 改动
+- 补全一点异常文档
 
 ## 那为什么要写这个库? 
 
@@ -69,6 +71,7 @@ Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 定期拉取上游更新, 相�
 ## 但是我真的想看文档?
 
 [mirai-api-http 对接 Chaldene](docs/mirai-api-http.md)  
+[自动重连/异常处理/HTTPS](docs/additions.md)
 
 其它内容通过 IDE 自动补全或者查阅原项目文档即可.
 
