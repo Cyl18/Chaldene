@@ -30,21 +30,24 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 
 ## 对比
 
-|                             |     Chaldene      |     Mirai.Net     | Cocoa  | Hyperai |    Mirai-CSharp    |
+|                             |     Chaldene      |     Mirai.Net     | Cocoa  | Hyperai<sup>[1]</sup> |    Mirai-CSharp    |
 | :-------------------------: | :---------------: | :---------------: | :----: | :-----: | :---------------: |
 |          .NET 版本          | .NET Standard 2.0 | .NET Standard 2.0 | .NET 5 | .NET 5  | .NET Standard 2.0 |
 |     单程序支持多个 Bot      |        ✅         |        ⛔         |   ⛔   |   ✅    |        ✅         |
-|         支持 HTTPS          |        ✅         |        ⛔         |   ⛔   |   ⛔    |        ⛔         |
-| 使用 ConfigureAwait(false)  |        ✅         |        ⛔         |   ⛔   |   ⛔    |     🟡(部分)      |
+|         支持 HTTPS          |        ✅         |        ⛔         |   ⛔   |   🟡<sup>[2]</sup>    |        ⛔         |
+| 使用 ConfigureAwait(false)  |        ✅         |        ⛔         |   ⛔   |   🟡<sup>[2]</sup>    |     🟡(部分)      |
 |       复杂的 MVC/DSL/事件订阅/DI        |        ⛔         |        🟡(部分)         |   ✅   |   ✅    |        ✅         |
 |         Native 依赖         |        ⛔         |        ⛔         |   ⛔   |   ⛔    |        ✅         |
 |          不会卖萌           |        ⛔         |        ✅         |   ✅   |   ✅    |        ✅         |
-| 写出 HelloWorld 所需行数<sup>[1]</sup> |        6         |        ~6         | ⛔<sup>[2]</sup>  |   8    |        24         |
+| 写出 HelloWorld 所需行数<sup>[3]</sup> |        6         |        ~6         | ⛔<sup>[4]</sup>  |   8<sup>[5]</sup>    |        24         |
 |      文档完善度(主观)       |       你猜        |       中高        |   低   | 看不懂  |  很高但是看不懂   |
 |          学习成本(主观)           |     **极低**      |        低         |  中高  |  极高   |        高         |
 
-[1] 指发一条消息和自动回复消息的有效代码(不含大括号和空格)行数, 可能不客观, 详细参见牢骚  
-[2] 我找不到主动发消息的方法
+[1] Hyperai 更像是一个脚手架, 功能由插件提供, 下面的内容以[这个插件](https://github.com/d3ara1n/Ac682.Hyperai.Clients.Mirai)为准  
+[2] 作者说需要插件支持, 但是我找不到这样的现成插件  
+[3] 指发一条消息和自动回复消息的有效代码(不含大括号和空格)行数, 可能不客观, 详细参见牢骚  
+[4] 我找不到主动发消息的方法  
+[5] 作者原话 "远多于8行", 此处行数指代使用上方插件的行数
 
 想看我发牢骚的话, [牢骚](docs/complicate.md)中有详细对比.
 
