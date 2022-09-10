@@ -53,7 +53,7 @@ public partial class MiraiBot
     /// <summary>
     ///     获取某群的全部群成员
     /// </summary>
-    public async Task<IEnumerable<Member>> GetGroupMembersAsync(string target)
+    public async Task<IEnumerable<Member>> GetGroupMembersAsync(GroupId target)
     {
         return await GetCollectionAsync<Member>(HttpEndpoints.MemberList, new
         {
@@ -62,32 +62,15 @@ public partial class MiraiBot
     }
 
     /// <summary>
-    ///     获取某群的全部群成员
-    /// </summary>
-    public async Task<IEnumerable<Member>> GetGroupMembersAsync(Group target)
-    {
-        return await GetGroupMembersAsync(target.Id).ConfigureAwait(false);
-    }
-
-    /// <summary>
     ///     删除好友
     /// </summary>
     /// <param name="target"></param>
-    public async Task DeleteFriendAsync(string target)
+    public async Task DeleteFriendAsync(UserId target)
     {
         _ = await PostJsonAsync(HttpEndpoints.DeleteFriend, new
         {
             target
         }).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    ///     删除好友
-    /// </summary>
-    /// <param name="friend"></param>
-    public async Task DeleteFriendAsync(Friend friend)
-    {
-        await DeleteFriendAsync(friend.Id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -101,7 +84,7 @@ public partial class MiraiBot
     /// <summary>
     ///     获取好友资料
     /// </summary>
-    public async Task<Profile> GetFriendProfileAsync(string target)
+    public async Task<Profile> GetFriendProfileAsync(UserId target)
     {
         return await GetProfileAsync(HttpEndpoints.FriendProfile, new
         {
@@ -110,19 +93,11 @@ public partial class MiraiBot
     }
 
     /// <summary>
-    ///     获取好友资料
-    /// </summary>
-    public async Task<Profile> GetFriendProfileAsync(Friend target)
-    {
-        return await GetFriendProfileAsync(target.Id).ConfigureAwait(false);
-    }
-
-    /// <summary>
     ///     获取群员资料
     /// </summary>
     /// <param name="id"></param>
     /// <param name="target">群号</param>
-    public async Task<Profile> GetMemberProfileAsync(string id, string target)
+    public async Task<Profile> GetMemberProfileAsync(GroupId id, UserId target)
     {
         return await GetProfileAsync(HttpEndpoints.MemberProfile, new
         {
@@ -142,7 +117,7 @@ public partial class MiraiBot
     /// <summary>
     ///     获取任意QQ的资料（需要mirai-api-http 2.4.0及以上）
     /// </summary>
-    public async Task<Profile> GetProfileAsync(string target)
+    public async Task<Profile> GetProfileAsync(UserId target)
     {
         return await GetProfileAsync(HttpEndpoints.UserProfile, new
         {

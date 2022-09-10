@@ -22,8 +22,8 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <param name="group"></param>
-    /// <param name="time"></param>
-    public async Task MuteAsync(string target, string group, int time)
+    /// <param name="time">禁言时间, 单位秒</param>
+    public async Task MuteAsync(GroupId group, UserId target, int time)
     {
         var payload = new
         {
@@ -35,10 +35,10 @@ public partial class MiraiBot
         await PostJsonAsync(HttpEndpoints.Mute, payload).ConfigureAwait(false);
     }
 
-    /// <see cref="MuteAsync(string,string,int)" />
-    public async Task MuteAsync(string target, string group, TimeSpan time)
+    /// <see cref="MuteAsync(GroupId,UserId,int)" />
+    public async Task MuteAsync(GroupId group, UserId target, TimeSpan time)
     {
-        await MuteAsync(target, group, Convert.ToInt32(time.TotalSeconds)).ConfigureAwait(false);
+        await MuteAsync(group, target, Convert.ToInt32(time.TotalSeconds)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <param name="group"></param>
-    public async Task UnMuteAsync(string target, string group)
+    public async Task UnMuteAsync(GroupId group, UserId target)
     {
         var payload = new
         {
@@ -96,7 +96,7 @@ public partial class MiraiBot
     /// <param name="target"></param>
     /// <param name="group"></param>
     /// <param name="message"></param>
-    public async Task KickAsync(string target, string group, string message = "")
+    public async Task KickAsync(GroupId group, UserId target, string message = "")
     {
         var payload = new
         {
@@ -126,7 +126,7 @@ public partial class MiraiBot
     ///     bot退出某群
     /// </summary>
     /// <param name="target"></param>
-    public  async Task LeaveAsync(string target)
+    public  async Task LeaveAsync(GroupId target)
     {
         var payload = new
         {
@@ -136,14 +136,6 @@ public partial class MiraiBot
         await PostJsonAsync(HttpEndpoints.Leave, payload).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     bot退出某群
-    /// </summary>
-    /// <param name="group"></param>
-    public  async Task LeaveAsync(Group group)
-    {
-        await LeaveAsync(group.Id).ConfigureAwait(false);
-    }
 
     #endregion
 
@@ -154,7 +146,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <param name="mute">是否禁言</param>
-    public  async Task MuteAllAsync(string target, bool mute = true)
+    public  async Task MuteAllAsync(GroupId target, bool mute = true)
     {
         var endpoint = mute ? HttpEndpoints.MuteAll : HttpEndpoints.UnmuteAll;
         var payload = new
@@ -165,15 +157,6 @@ public partial class MiraiBot
         await PostJsonAsync(endpoint, payload).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     全体禁言
-    /// </summary>
-    /// <param name="group"></param>
-    /// <param name="mute">是否禁言</param>
-    public  async Task MuteAllAsync(Group group, bool mute = true)
-    {
-        await MuteAllAsync(group.Id, mute).ConfigureAwait(false);
-    }
 
     #endregion
 
@@ -209,7 +192,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="messageId">消息id</param>
     /// <param name="target">群id</param>
-    public  async Task SetEssenceMessageAsync(string messageId, string target)
+    public  async Task SetEssenceMessageAsync(GroupId target, string messageId)
     {
         var payload = new
         {
@@ -226,7 +209,7 @@ public partial class MiraiBot
     /// <param name="receiver"></param>
     public  async Task SetEssenceMessageAsync(GroupMessageReceiver receiver)
     {
-        await SetEssenceMessageAsync(receiver.MessageChain.OfType<SourceMessage>().First().MessageId, receiver.GroupId).ConfigureAwait(false);
+        await SetEssenceMessageAsync(receiver.GroupId, receiver.MessageChain.OfType<SourceMessage>().First().MessageId).ConfigureAwait(false);
     }
 
     #endregion
@@ -238,21 +221,11 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
-    public  async Task<GroupSetting> GetGroupSettingAsync(string target)
+    public  async Task<GroupSetting> GetGroupSettingAsync(GroupId target)
     {
         var response = await GetAsync(HttpEndpoints.GroupConfig, new { target }).ConfigureAwait(false);
 
         return JsonConvert.DeserializeObject<GroupSetting>(response);
-    }
-
-    /// <summary>
-    ///     获取群设置
-    /// </summary>
-    /// <param name="group"></param>
-    /// <returns></returns>
-    public  async Task<GroupSetting> GetGroupSettingAsync(Group group)
-    {
-        return await GetGroupSettingAsync(group.Id).ConfigureAwait(false);
     }
 
 
@@ -261,7 +234,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <param name="setting"></param>
-    public  async Task SetGroupSettingAsync(string target, GroupSetting setting)
+    public  async Task SetGroupSettingAsync(GroupId target, GroupSetting setting)
     {
         var payload = new
         {
@@ -272,15 +245,6 @@ public partial class MiraiBot
         await PostJsonAsync(HttpEndpoints.GroupConfig, payload).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     修改群设置
-    /// </summary>
-    /// <param name="group"></param>
-    /// <param name="setting"></param>
-    public  async Task SetGroupSettingAsync(Group group, GroupSetting setting)
-    {
-        await SetGroupSettingAsync(group.Id, setting).ConfigureAwait(false);
-    }
 
     #endregion
 
@@ -292,7 +256,7 @@ public partial class MiraiBot
     /// <param name="memberQQ"></param>
     /// <param name="group"></param>
     /// <returns></returns>
-    public  async Task<Member> GetMemberAsync(string memberQQ, string group)
+    public  async Task<Member> GetMemberAsync(GroupId group, UserId memberQQ)
     {
         var response = await GetAsync(HttpEndpoints.MemberInfo, new
         {
@@ -311,7 +275,7 @@ public partial class MiraiBot
     /// <param name="card">群名片, 需要管理员权限</param>
     /// <param name="title">群头衔, 需要群主权限</param>
     /// <returns></returns>
-    public  async Task<Member> SetMemberInfoAsync(string memberQQ, string group, string card = null,
+    public  async Task<Member> SetMemberInfoAsync(GroupId group, UserId memberQQ, string card = null,
         string title = null)
     {
         var payload = new
@@ -327,8 +291,13 @@ public partial class MiraiBot
 
         await PostJsonAsync(HttpEndpoints.MemberInfo, payload).ConfigureAwait(false);
 
-        return await GetMemberAsync(memberQQ, group).ConfigureAwait(false);
+        return await GetMemberAsync(group, memberQQ).ConfigureAwait(false);
     }
 
+    /// <see cref="SetMemberInfoAsync(Chaldene.Data.Shared.GroupId,Chaldene.Data.Shared.UserId,string,string)"/>
+    public async Task<Member> SetMemberInfoAsync(Member member, string card = null, string title = null)
+    {
+        return await SetMemberInfoAsync(member.Group, member.Id, card, title).ConfigureAwait(false);
+    }
     #endregion
 }

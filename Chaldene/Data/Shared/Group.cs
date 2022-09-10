@@ -27,6 +27,11 @@ public record Group
     [JsonConverter(typeof(StringEnumConverter))]
     public Permissions Permission { get; set; }
 
+    public static implicit operator GroupId(Group group)
+    {
+        return group.Id;
+    }
+
 }
 
 /// <summary>

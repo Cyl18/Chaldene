@@ -22,8 +22,10 @@ using Chaldene.Data.Sessions;
 using Chaldene.Data.Shared;
 using Chaldene.Utils.Internal;
 using Chaldene.Utils.Scaffolds;
+using Flurl.Http;
 using Newtonsoft.Json;
 using Websocket.Client;
+using Websocket.Client.Exceptions;
 
 namespace Chaldene.Sessions;
 
@@ -476,6 +478,8 @@ public partial class MiraiBot : IDisposable
     /// <summary>
     /// 启动bot
     /// </summary>
+    /// <exception cref="FlurlHttpException"></exception>
+    /// <exception cref="WebsocketException"></exception>
     public async Task LaunchAsync()
     {
         //Instance = this;
@@ -484,8 +488,13 @@ public partial class MiraiBot : IDisposable
         await VerifyAsync().ConfigureAwait(false);
         await BindAsync().ConfigureAwait(false);
         await StartWebsocketListenerAsync().ConfigureAwait(false);
+        Connected = true;
     }
 
+    /// <summary>
+    /// 标识 WebSocket 连接是否已经建立
+    /// </summary>
+    public bool Connected { get; set; }
 
     #endregion
 
@@ -517,8 +526,8 @@ public partial class MiraiBot : IDisposable
     string WebsocketScheme => UseHttps ? "wss" : "ws";
     /// <summary>
     /// 使用自动重连<br/>
-    /// 原理：在websocket断开连接后无限重试，但是不会输出任何内容<br/>
-    /// 如果需要输出内容请手动重连 具体可以参考文档
+    /// 原理：在websocket断开连接后无限重试，但是不会输出任何报错<br/>
+    /// 如果需要输出报错请手动重连 具体可以参考文档
     /// </summary>
     public void UseAutoReconnect()
     {
@@ -534,6 +543,7 @@ public partial class MiraiBot : IDisposable
             }
             catch (Exception)
             {
+                await Task.Delay(1000);
                 //
             }
         };
@@ -662,7 +672,11 @@ public partial class MiraiBot : IDisposable
         await _client.StartOrFail().ConfigureAwait(false);
 
         _client.DisconnectionHappened
-            .Subscribe(x => { _disconnected.OnNext(x.CloseStatus ?? WebSocketCloseStatus.Empty); });
+            .Subscribe(x =>
+            {
+                Connected = false;
+                _disconnected.OnNext(x.CloseStatus ?? WebSocketCloseStatus.Empty);
+            });
 
         _client.MessageReceived
             .Where(message => message.MessageType == WebSocketMessageType.Text)

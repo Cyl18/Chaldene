@@ -60,7 +60,7 @@ public partial class MiraiBot
     /// <param name="handler"></param>
     /// <param name="message"></param>
     public async Task HandleNewInvitationRequestedAsync(NewInvitationRequestedEvent requestedEvent,
-        NewInvitationRequestHandlers handler, string message)
+        NewInvitationRequestHandlers handler, string message = "")
     {
         var payload = new
         {

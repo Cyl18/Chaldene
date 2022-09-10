@@ -21,11 +21,11 @@ public partial class MiraiBot
     /// <summary>
     ///     获取群文件列表
     /// </summary>
-    /// <param name="target"></param>
+    /// <param name="target">群号</param>
     /// <param name="withDownloadInfo">附带下载信息，默认不附带</param>
     /// <param name="folderId">文件夹id，空字符串即为根目录</param>
     /// <returns></returns>
-    public async Task<IEnumerable<File>> GetFilesAsync(string target, bool? withDownloadInfo = null,
+    public async Task<IEnumerable<File>> GetFilesAsync(GroupId target, bool? withDownloadInfo = null,
         string folderId = "")
     {
         var result = await GetAsync(HttpEndpoints.FileList, new
@@ -47,7 +47,7 @@ public partial class MiraiBot
     /// <param name="fileId">文件id</param>
     /// <param name="withDownloadInfo"></param>
     /// <returns></returns>
-    public async Task<File> GetFileAsync(string target, string fileId, bool? withDownloadInfo = null)
+    public async Task<File> GetFileAsync(GroupId target, string fileId, bool? withDownloadInfo = null)
     {
         var result = await GetAsync(HttpEndpoints.FileInfo, new
         {
@@ -65,7 +65,7 @@ public partial class MiraiBot
     /// <param name="target"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<File> CreateFolderAsync(string target, string name)
+    public async Task<File> CreateFolderAsync(GroupId target, string name)
     {
         var result = await PostJsonAsync(HttpEndpoints.FileCreate, new
         {
@@ -82,7 +82,7 @@ public partial class MiraiBot
     /// </summary>
     /// <param name="target"></param>
     /// <param name="fileId"></param>
-    public async Task DeleteFileAsync(string target, string fileId)
+    public async Task DeleteFileAsync(GroupId target, string fileId)
     {
         _ = await PostJsonAsync(HttpEndpoints.FileDelete, new
         {
@@ -97,7 +97,7 @@ public partial class MiraiBot
     /// <param name="target"></param>
     /// <param name="fileId">移动文件id</param>
     /// <param name="destination">移动目标文件夹id</param>
-    public async Task MoveFileAsync(string target, string fileId, string destination)
+    public async Task MoveFileAsync(GroupId target, string fileId, string destination)
     {
         _ = await PostJsonAsync(HttpEndpoints.FileMove, new
         {
@@ -110,10 +110,10 @@ public partial class MiraiBot
     /// <summary>
     ///     重命名群文件
     /// </summary>
-    /// <param name="target"></param>
+    /// <param name="target">群号</param>
     /// <param name="fileId">重命名文件id</param>
     /// <param name="newName">新文件名</param>
-    public async Task RenameFileAsync(string target, string fileId, string newName)
+    public async Task RenameFileAsync(GroupId target, string fileId, string newName)
     {
         _ = await PostJsonAsync(HttpEndpoints.FileRename, new
         {
@@ -130,7 +130,7 @@ public partial class MiraiBot
     /// <param name="filePath">文件的路径</param>
     /// <param name="uploadPath">上传路径，例如/xx（不可以指定文件名，默认为上传到根目录）</param>
     /// <returns>有几率返回null，这是个mirai-api-http的玄学问题</returns>
-    public async Task<File> UploadFileAsync(string target, string filePath, string uploadPath = "/")
+    public async Task<File> UploadFileAsync(GroupId target, string filePath, string uploadPath = "/")
     {
         uploadPath ??= $"/{Path.GetFileName(filePath)}";
 

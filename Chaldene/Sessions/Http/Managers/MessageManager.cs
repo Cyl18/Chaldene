@@ -52,7 +52,7 @@ public partial class MiraiBot
     /// <param name="messageId">消息id</param>
     /// <param name="target">好友id或群id</param>
     /// <returns></returns>
-    public async Task<T> GetMessageReceiverAsync<T>(string messageId, string target) where T : MessageReceiverBase
+    public async Task<T> GetMessageReceiverAsync<T>(string target, string messageId) where T : MessageReceiverBase
     {
         var response = await GetAsync(HttpEndpoints.MessageFromId, new
         {
@@ -62,6 +62,7 @@ public partial class MiraiBot
 
         return JsonConvert.DeserializeObject<T>(response);
     }
+    
 
     /// <summary>
     /// 获取漫游消息（目前仅支持好友）
@@ -227,9 +228,9 @@ public partial class MiraiBot
     /// <summary>
     ///     撤回消息
     /// </summary>
-    /// <param name="messageId">消息id</param>
     /// <param name="target">好友id或群id</param>
-    public async Task RecallAsync(string messageId, string target)
+    /// <param name="messageId">消息id</param>
+    public async Task RecallAsync(string target, string messageId)
     {
         var payload = new
         {

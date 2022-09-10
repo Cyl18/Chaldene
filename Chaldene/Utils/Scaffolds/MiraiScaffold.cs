@@ -135,7 +135,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendMessageAsync(this GroupMessageReceiver receiver, string message)
+    public static async Task<string> SendMessageAsync(this GroupMessageReceiver receiver, params MessageBase[] message)
     {
         return await receiver.Bot
             .SendGroupMessageAsync(receiver.Sender.Group.Id, message).ConfigureAwait(false);
@@ -147,7 +147,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendMessageAsync(this FriendMessageReceiver receiver, string message)
+    public static async Task<string> SendMessageAsync(this FriendMessageReceiver receiver, params MessageBase[] message)
     {
         return await receiver.Bot
             .SendFriendMessageAsync(receiver.Sender.Id, message).ConfigureAwait(false);
@@ -159,7 +159,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> SendMessageAsync(this TempMessageReceiver receiver, string message)
+    public static async Task<string> SendMessageAsync(this TempMessageReceiver receiver, params MessageBase[] message)
     {
         return await receiver.Bot
             .SendTempMessageAsync(receiver.Sender, message).ConfigureAwait(false);
@@ -185,7 +185,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
         await receiver.Bot
-            .RecallAsync(id, receiver.GroupId).ConfigureAwait(false);
+            .RecallAsync(receiver.GroupId, id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
         await receiver.Bot
-            .RecallAsync(id, receiver.FriendId).ConfigureAwait(false);
+            .RecallAsync(receiver.FriendId, id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -207,7 +207,7 @@ public static class MiraiScaffold
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
         await receiver.Bot
-            .RecallAsync(id, receiver.Sender.Id).ConfigureAwait(false);
+            .RecallAsync(receiver.Sender.Id, id).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -261,7 +261,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteMessageAsync(this FriendMessageReceiver receiver, string message)
+    public static async Task<string> QuoteMessageAsync(this FriendMessageReceiver receiver, params MessageBase[] message)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
@@ -275,7 +275,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteMessageAsync(this GroupMessageReceiver receiver, string message)
+    public static async Task<string> QuoteMessageAsync(this GroupMessageReceiver receiver, params MessageBase[] message)
     {
         var id = receiver.MessageChain.ToList().OfType<SourceMessage>().First().MessageId;
 
@@ -289,7 +289,7 @@ public static class MiraiScaffold
     /// <param name="receiver"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static async Task<string> QuoteMessageAsync(this TempMessageReceiver receiver, string message)
+    public static async Task<string> QuoteMessageAsync(this TempMessageReceiver receiver, params MessageBase[] message)
     {
         var id = receiver.MessageChain.OfType<SourceMessage>().First().MessageId;
 
