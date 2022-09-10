@@ -26,11 +26,11 @@ bot.GroupMessageReceived += async (sender, args) =>
 await bot.SendFriendMessageAsync(233656, "橘子!");
 ```
 
-好了, 你学会使用 Chaldene 了♥.
+好了, 你学会使用 Chaldene 了♥
 
 ## 对比
 
-|                             |     Chaldene      |     Mirai.Net     | Cocoa  | Hyperai |    Mirai-Sharp    |
+|                             |     Chaldene      |     Mirai.Net     | Cocoa  | Hyperai |    Mirai-CSharp    |
 | :-------------------------: | :---------------: | :---------------: | :----: | :-----: | :---------------: |
 |          .NET 版本          | .NET Standard 2.0 | .NET Standard 2.0 | .NET 5 | .NET 5  | .NET Standard 2.0 |
 |     单程序支持多个 Bot      |        ✅         |        ⛔         |   ⛔   |   ✅    |        ✅         |
@@ -50,14 +50,14 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 
 ## 和 Mirai.Net 的区别在哪?
 
-Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 原作者比较忙. Chaldene 定期会拉取上游更新, 相比 Mirai.Net 的主要区别和改动有:
+Chaldene 从 [Mirai.Net 2.4.4](https://github.com/SinoAHpx/Mirai.Net/tree/2.4) 分支 fork 而来, 原作者比较忙. Chaldene 定期会拉取上游更新, 相比 Mirai.Net 的主要区别和改动有:
 
-- 为 SendMessage 加入了 params MessageBase[], 简化消息发送
+- 为 SendMessage 加入了 `params MessageBase[]`, 简化消息发送
 - 将 EventReceived 和 MessageReceived 整合到 MiraiBot 中显式声明
 - 将 Account/File/Group/Message/Request Manager 整合到 MiraiBot 中显式声明
 - 将群号和个人QQ号使用强类型声明
 - 为发送图片加入了流支持
-- 使用了 .ConfigureAwait(false)
+- 使用了 `.ConfigureAwait(false)`
 - 支持多机器人实例
 - 支持 HTTPS (`MiraiBot.UseHttps = true`)
 - 加入 `MiraiBot.Connected`/`MiraiBot.UseAutoReconnect()`
@@ -81,7 +81,7 @@ Chaldene 从 Mirai.Net 2.4.4 分支 fork 而来, 原作者比较忙. Chaldene �
 
 ## 闲聊群
 
-加 [Mirai.Net 的 752379554](https://jq.qq.com/?_wv=1027&k=gdWqppEO)
+加 [Mirai.Net 的闲聊群 752379554](https://jq.qq.com/?_wv=1027&k=gdWqppEO)~
 
 ## 感谢
 
