@@ -480,6 +480,7 @@ public partial class MiraiBot : IDisposable
     /// </summary>
     /// <exception cref="FlurlHttpException"></exception>
     /// <exception cref="WebsocketException"></exception>
+    /// <exception cref="InvalidResponseException"></exception>
     public async Task LaunchAsync()
     {
         //Instance = this;

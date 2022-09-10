@@ -43,4 +43,4 @@ var bot = new MiraiBot("xxx:443", VERIFY_KEY, BOT_QQ) { UseHttps = true };
 
 ## 线程安全
 
-理论上吧, WebSocket 只接收消息, 而其它请求通过 http 发送, 所以理论上是线程安全的.
+WebSocket 只接收消息, 而其它请求通过 http 发送, 所以理论上是线程安全的.

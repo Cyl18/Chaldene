@@ -69,12 +69,12 @@ Chaldene 从 [Mirai.Net 2.4.4](https://github.com/SinoAHpx/Mirai.Net/tree/2.4) �
 
 ## 那为什么要写这个库? 
 
-[牢骚](docs/complicate.md)
+- [牢骚](docs/complicate.md)
 
 ## 但是我真的想看文档?
 
-[mirai-api-http 对接 Chaldene](docs/mirai-api-http.md)  
-[自动重连/异常处理/HTTPS](docs/additions.md)
+- [mirai-api-http 对接 Chaldene](docs/mirai-api-http.md)  
+- [自动重连/异常处理/HTTPS](docs/additions.md)
 
 其它内容通过 IDE 自动补全或者查阅原项目文档即可.
 
@@ -88,7 +88,7 @@ Chaldene 从 [Mirai.Net 2.4.4](https://github.com/SinoAHpx/Mirai.Net/tree/2.4) �
 
 ## 感谢
 
-感谢 [原作者 SinoAHpx](https://github.com/SinoAHpx) 创造了 Mirai.Net。
+感谢 [原作者 SinoAHpx](https://github.com/SinoAHpx) 创造了 Mirai.Net.
 
 ## 原项目文档
 
