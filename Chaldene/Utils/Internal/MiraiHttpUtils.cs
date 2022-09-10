@@ -33,7 +33,7 @@ public partial class MiraiBot
                 // else
                 //    message += $"\r\n备注: {MiraiBot.Instance.ToJsonString()}";
                 // ?????
-                throw new InvalidResponseException(message);
+                throw new InvalidResponseException(message, (MiraiApiHttpStatusCodes)int.Parse(code!));
             }
         }
     }

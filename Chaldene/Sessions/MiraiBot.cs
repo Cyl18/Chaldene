@@ -708,7 +708,7 @@ public partial class MiraiBot : IDisposable
             var rawChain = data.Fetch("messageChain");
             if (rawChain == null || rawChain.IsNullOrEmpty())
             {
-                throw new InvalidResponseException("Websocket传回错误的响应");
+                throw new InvalidResponseException("Websocket传回错误的响应", null);
             }
 
             receiver.MessageChain = rawChain
