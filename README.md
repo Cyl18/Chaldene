@@ -30,7 +30,7 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 
 ## 对比
 
-|                             |     Chaldene      |     Mirai.Net     | Cocoa  | Hyperai<sup>[1]</sup> |    Mirai-CSharp    |
+|                             |     Chaldene      |     Mirai.Net 2.4.4     | Cocoa  | Hyperai<sup>[1]</sup> |    Mirai-CSharp 2.1.0   |
 | :-------------------------: | :---------------: | :---------------: | :----: | :-----: | :---------------: |
 |          .NET 版本          | .NET Standard 2.0 | .NET Standard 2.0 | .NET 5 | .NET 5  | .NET Standard 2.0 |
 |     单程序支持多个 Bot      |        ✅         |        ⛔         |   ⛔   |   ✅    |        ✅         |
