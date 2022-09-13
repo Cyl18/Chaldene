@@ -21,6 +21,7 @@ namespace Chaldene.Test
         private static async Task Main()
         {
             await PrivateTest.Run();
+          
         }
     }
 }

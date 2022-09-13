@@ -29,7 +29,7 @@ public class InvalidResponseException : Exception
     
 }
 
-enum MiraiApiHttpStatusCodes
+public enum MiraiApiHttpStatusCodes
 {
     [Description("success")] Success = 0,
     [Description("Auth Key错误")] AuthKeyFail = 1,

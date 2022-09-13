@@ -45,7 +45,7 @@ public record Friend
 /// <summary>
 /// 个人QQ号
 /// </summary>
-public class UserId
+public struct UserId
 {
     /// <summary>
     /// QQ号
@@ -89,5 +89,51 @@ public class UserId
     public static implicit operator UserId(long qq)
     {
         return new UserId(qq.ToString());
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public bool Equals(UserId other)
+    {
+        return Id == other.Id;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object obj)
+    {
+        return obj is UserId other && Equals(other);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
+    {
+        return (Id != null ? Id.GetHashCode() : 0);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator ==(UserId left, UserId right)
+    {
+        return left.Equals(right);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator !=(UserId left, UserId right)
+    {
+        return !left.Equals(right);
     }
 }

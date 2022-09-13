@@ -37,25 +37,25 @@ public record Group
 /// <summary>
 /// 群号
 /// </summary>
-public class GroupId
+public struct GroupId
 {
     /// <summary>
     /// 群号
     /// </summary>
     public string Id { get; }
-/// <summary>
-/// 
-/// </summary>
-/// <param name="id"></param>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
     public GroupId(string id)
     {
         Id = id;
     }
-/// <summary>
-/// 
-/// </summary>
-/// <param name="qq"></param>
-/// <returns></returns>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="qq"></param>
+    /// <returns></returns>
     public static implicit operator GroupId(string qq)
     {
         return new GroupId(qq);
@@ -77,5 +77,52 @@ public class GroupId
     public static implicit operator GroupId(long qq)
     {
         return new GroupId(qq.ToString());
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public bool Equals(GroupId other)
+    {
+        return Id == other.Id;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object obj)
+    {
+        return obj is GroupId other && Equals(other);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
+    {
+        return (Id != null ? Id.GetHashCode() : 0);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator ==(GroupId left, GroupId right)
+    {
+        return left.Equals(right);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator !=(GroupId left, GroupId right)
+    {
+        return !left.Equals(right);
     }
 }
