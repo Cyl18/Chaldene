@@ -37,7 +37,7 @@ await bot.SendFriendMessageAsync(233656, "橘子!");
 |          .NET 版本          | .NET Standard 2.0 | .NET Standard 2.0 | .NET 5 | .NET 5  | .NET Standard 2.0 |
 |     单程序支持多个 Bot      |        ✅         |        ⛔         |   ⛔   |   ✅    |        ✅         |
 |         支持 HTTPS          |        ✅         |        ⛔         |   ⛔   |   🟡<sup>[2]</sup>    |        ⛔         |
-| 使用 ConfigureAwait(false)  |        ✅         |        ⛔         |   ⛔   |   🟡<sup>[2]</sup>    |     🟡(部分)      |
+| 使用 ConfigureAwait(false)  |        ✅         |        ⛔         |   ⛔   |   🟡<sup>[2]</sup>    |     ~~🟡~~✅      |
 |       复杂的 MVC/DSL/事件订阅/DI        |        ⛔         |        🟡(部分)         |   ✅   |   ✅    |        ✅         |
 |         Native 依赖         |        ⛔         |        ⛔         |   ⛔   |   ⛔    |        ✅         |
 |          不会卖萌           |        ⛔         |        ✅         |   ✅   |   ✅    |        ✅         |
