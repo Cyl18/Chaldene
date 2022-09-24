@@ -1,6 +1,7 @@
+<img src="docs/chaldene.png" width="150"/> 
+
 # Chaldene
 
-<img src="docs/chaldene.png" width="150"/> 
 
 Chaldene 是 [Mirai.Net](https://github.com/SinoAHpx/Mirai.Net) 项目的简化重构版 fork ([已经取得作者授权](docs/images/授权.png)), 原作者 [SinoAHpx](https://github.com/SinoAHpx), 是基于 [mirai-api-http] 实现的 C# 版超轻量级 [mirai] 社区 SDK.
 

@@ -174,6 +174,28 @@ public partial class MiraiBot
 
         return new ImageInfo(re.Fetch("imageId"), re.Fetch("url"));
     }
+    /// <summary>
+    ///     上传图片
+    /// </summary>
+    /// <param name="image">图片</param>
+    /// <param name="imageUploadTargets">上传类型</param>
+    /// <returns>item1: 图片id，item2：图片url</returns>
+    public async Task<ImageInfo> UploadImageAsync(byte[] image,
+        ImageUploadTargets imageUploadTargets = ImageUploadTargets.Group)
+    {
+        var url = $"{HttpScheme}://{Address.HttpAddress}/{HttpEndpoints.UploadImage.GetDescription()}";
+        var ms = new MemoryStream(image);
+        var result = await url
+            .WithHeader("Authorization", $"session {HttpSessionKey}")
+            .PostMultipartAsync(x => x
+                .AddString("type", imageUploadTargets.GetDescription())
+                .AddFile("img", ms, $"{Guid.NewGuid():D}.png")).ConfigureAwait(false);
+
+        var re = await result.GetStringAsync().ConfigureAwait(false);
+        EnsureSuccess(re, "这大抵是个玄学问题罢。");
+
+        return new ImageInfo(re.Fetch("imageId"), re.Fetch("url"));
+    }
 
     /// <summary>
     ///     上传图片

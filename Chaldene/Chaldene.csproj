@@ -17,6 +17,7 @@
 	    <IncludeSymbols>true</IncludeSymbols>
 	    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+	    <PackageIcon>chaldene.png</PackageIcon>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -26,6 +27,13 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <DocumentationFile>bin\Release\Chaldene.xml</DocumentationFile>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\docs\chaldene.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Flurl" Version="3.0.6" />
